@@ -1,7 +1,8 @@
-\input texinfo   @c -*-texinfo-*-
+@c -*-mode: texinfo-*-
+\input texinfo   
 @c %**start of header
 @setfilename gngserver.info
-@settitle GNGServer - Next Generation Server for the PBeM game GalaxyNG
+@settitle GNGServer 
 @setchapternewpage odd
 @c %**end of header
 @c @finalout
@@ -9,15 +10,15 @@
 
 @include version.texi
 
-@dircategory Games
+@dircategory Programming
 @direntry
-* gngserver: (gngserver).	Next Generation Server for the PBeM game GalaxyNG.
+* gngserver: (gngserver).		Server for the PBeM game GalaxyNG.
 @end direntry
 
 @ifinfo
-This file documents GNGServer.
+This file documents gngserver.
 
-Copyright 2004 Kenneth D. Weinert
+Copyright 2005 Kenneth D. Weinert
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -47,11 +48,11 @@ approved by the Foundation.
 @subtitle Edition @value{EDITION}, @value{UPDATED}
 @subtitle $Id$
 @author Kenneth D. Weinert
-@author @email{galaxyserver@@gmail.com)
+@author @email{madcoder42@users.sourceforge.net}
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2004 Kenneth D. Weinert
+Copyright @copyright{} 2005 Kenneth D. Weinert
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -82,36 +83,25 @@ This is GNGServer.
 
 @menu
 * Introduction::
+* Syntax::
+* Index::
 @end menu
 
 @node Introduction
 @chapter Introduction
 
-GalaxyNG is a play by email (PBeM) game where you control a race of
-beings that one or more home planets. You'll issue orders, get reports,
-use diplomacy with other players, etc. You can find all you want to know
-about the game at http://galaxyng.sourceforge.net.
+GNGServer - a game server for the PBeM game galaxy.
 
-This document is about the server that implements the rules, adjudicates
-turns, allows players to interact outside of the turn structure, and
-manages game design, creation, and registration.
+@node Syntax
+@chapter Syntax
 
-The original server was written over the course of many years and
-enhanced and fixed by many people. Written in C, it has disturbing
-comments like "don't compile with optimizations because it will break
-everything". The code itself has become very fragile -
-enhancements/fixes in one place can introduce bugs in seemingly
-unrelated places.
+@cindex tokeniser
 
-Thus this rewrite. I've undertaken it to accomplish several goals -
-rewrite it in C++ (more for my internalization of the language than a
-belief that C++ is required), reproduce the functionality of the
-existing server, add some enhancements (I'm tired of only planets having
-routes :), and in general make the code easier to extend for other
-future enhancements.
+
+@cindex syntax handlers
 
 @page
-@node Index, (dir), (dir), (dir)
+@node Index
 @unnumbered Index
 
 @printindex cp

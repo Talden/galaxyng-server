@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright 2004 Kenneth D. Weinert
+## Copyright 2005 Kenneth D. Weinert
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
