@@ -16,8 +16,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#if !defined(GNGS_SIC_H)
-#define GNGS_SIC_H 1
+#if !defined(GNGS_SERVER_H)
+#define GNGS_SERVER_H 1
 
 #include <gngserver/common.h>
 #include <gngserver/error.h>
@@ -37,7 +37,7 @@ typedef struct statedata {
   struct statedata *next;	/* so they can be chained */
   const char *key;		/* used as a key to find the right data */
   void *data;			/* associated state data */
-  void (*delete) (void *data);
+  void (*destroy) (void *data);
 } GNGServerState;
 
 typedef struct gngserver {
@@ -46,13 +46,13 @@ typedef struct gngserver {
   size_t lim;			/* bytes allocated to result field */
   struct builtintab *builtins;	/* tables of builtin functions */
   GNGServerState *state;	/* state data from syntax extensions */
-} Sic;
+} GNGServer;
 
 extern GNGServer *gngserver_new(void);
 extern GNGServer *gngserver_delete(GNGServer *stale);
 
 extern int gngserverstate_set(GNGServer *gngserver, const char *key,
-			      void *value, void (*remove) (void *value));
+			      void *value, void (*destroy) (void *value));
 extern void *gngserverstate_get(GNGServer *gngserver, const char *key);
 extern int gngserverstate_clear(GNGServer *gngserver, const char *key);
 

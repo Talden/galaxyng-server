@@ -54,8 +54,8 @@ gngserverstate_set(GNGServer *gngserver, const char *key, void *value,
   GNGServerState *state = gngserverstate_find (gngserver, key);
 
   if (state) {
-    if (state->remove)
-      (*state->remove) (state->data);
+    if (state->destroy)
+      (*state->destroy) (state->data);
   }
   else {
     state = XMALLOC (GNGServerState, 1);
@@ -67,7 +67,7 @@ gngserverstate_set(GNGServer *gngserver, const char *key, void *value,
   }
 
   state->data = value;
-  state->remove = remove;
+  state->destroy = destroy;
 
   return 0;
 }
@@ -104,8 +104,8 @@ gngserverstate_clear(GNGServer *gngserver, const char *key)
   if (!stale)
     return -1;
 
-  if (stale->remove)
-    (*stale->remove) (stale->data);
+  if (stale->destroy)
+    (*stale->destroy) (stale->data);
   XFREE (stale->key);
   XFREE (stale);
 

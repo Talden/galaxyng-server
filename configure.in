@@ -19,9 +19,11 @@ AC_INIT(gngserver/error.cpp)
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h:config-h.in)
 AM_INIT_AUTOMAKE(gngserver, 0.1.0)
+AM_PATH_CPPUNIT(1.9.6)
 
-AC_PROG_CC
+AC_PROG_CXX
 AC_LIBTOOL_DLOPEN
+AC_PROG_INSTALL
 AM_PROG_LIBTOOL
 
 AC_HEADER_STDC
@@ -259,8 +261,8 @@ _EOF_
   ac_cv_header_varargs_h=$ac_cv_header_varargs_h
 ])
 
-LTLIBOBJS=`echo "$LIBOBJS"|sed 's,\.o ,.lo ,g;s,\.o$,.lo,'`
-AC_SUBST(LTLIBOBJS)
+#LTLIBOBJS=`echo "$LIBOBJS"|sed 's,\.o ,.lo ,g;s,\.o$,.lo,'`
+#AC_SUBST(LTLIBOBJS)
 
 AC_SUBST(ac_aux_dir)
 

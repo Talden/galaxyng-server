@@ -25,9 +25,9 @@
 #include "common.h"
 
 char *
-xstrdup (const char *string)
+xstrdup (const char *str)
 {
-  return string ? strcpy (xmalloc (strlen (string) + 1), string) : NULL;
+  return str ? strcpy ((char*)xmalloc (strlen (str) + 1), str) : NULL;
 }
 
 #endif /* !WITH_DMALLOC */

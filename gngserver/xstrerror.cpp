@@ -9,7 +9,14 @@
 
 #include <stdio.h>
 
-extern char *strerror ();
+#if HAVE_STRING_H
+# include <string.h>
+#else
+# if HAVE_STRINGS_H
+#  include <strings.h>
+# endif
+#endif
+
 
 /* If strerror returns NULL, we'll format the number into a static buffer.  */
 #define ERRSTR_FMT "undocumented error #%d"

@@ -23,47 +23,56 @@
 #endif
 
 #include "common.h"
-#include "error.h"
+#include "Diagnostic.h"
 
 void *
 xcalloc (size_t num, size_t size)
 {
+
 #if HAVE_CALLOC
-  void *new = calloc (num, size);
-  if (!new)
-    sic_fatal ("Memory exhausted");
+  void *memory = calloc (num, size);
+  if (!memory) {
+    Diagnostic *dia = new Diagnostic("xcalloc");
+    dia->Fatal ("Memory exhausted");
+  }
 #else
-  void *new = xmalloc (num * size);
+  void *memory = xmalloc (num * size);
   bzero (new, num * size);
 #endif
 
-  return new;
+  return memory;
 }
      
 
 void *
 xmalloc (size_t num)
 {
-  void *new = malloc (num);
-  if (!new)
-    sic_fatal ("Memory exhausted");
+  void *memory = malloc (num);
 
-  return new;
+  if (!memory) {
+    Diagnostic *dia = new Diagnostic("xmalloc");
+    dia->Fatal ("Memory exhausted");
+  }
+
+  return memory;
 }
 
 void *
 xrealloc (void *p, size_t num)
 {
-  void *new;
+  void *memory;
 
   if (!p)
     return xmalloc (num);
 
-  new = realloc (p, num);
-  if (!new)
-    sic_fatal ("Memory Exhausted");
+  memory = realloc (p, num);
 
-  return new;
+  if (!memory) {
+    Diagnostic *dia = new Diagnostic("xrealloc");
+    dia->Fatal ("Memory Exhausted");
+  }
+
+  return memory;
 }
 
 #endif /* !WITH_DMALLOC */
