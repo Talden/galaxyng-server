@@ -1,5 +1,5 @@
-/* waitpid.c -- implement waitpid() for architectures without it
-   Copyright (C) 2000 Gary V. Vaughan
+/* strspn.cpp -- implement strspn() for those architectures without it
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,23 +15,29 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#if HAVE_CONFIG_H
+
+#if HAVE_CONFIG_J
 #  include <config.h>
 #endif
 
-#include <sys/types.h>		/* for pid_t */
-#if HAVE_SYS_WAIT_H
-#  include <sys/wait.h>
+#include <sys/types.h>
+
+#if HAVE_STRING_H
+#  include <string.h>
+#elif HAVE_STRINGS_H
+#  include <strings.h>
+#else
+extern char *strchr ();
 #endif
 
-pid_t
-waitpid (pid_t pid, int *pstatus, int options)
+size_t
+strspn (const *string, const *accept)
 {
-  pid_t result;
+	size_t count = 0;
+	while (strchr (accept, *string)) {
+		++count, ++string;
+    }
 
-  do {
-    result = wait (pstatus);
-  } while  (result >= 0 && result != pid);
-
-  return result;
+	return count;
 }
+

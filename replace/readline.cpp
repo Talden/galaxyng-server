@@ -1,5 +1,5 @@
-/* vfprintf.c -- implement vfprintf() for architectures without it
-   Copyright (C) 2000 Gary V. Vaughan
+/* readline.cpp -- implement readline() for architectures without it.
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,48 @@
 
 #include <stdio.h>
 
-#if HAVE_STDARG_H && !HAVE_VARARGS_H
-#  include <stdarg.h>
-#else /*!HAVE_STDARG_H || HAVE_VARARGS_H*/
-#  include <varargs.h>
-#endif /*HAVE_STDARG_H && !HAVE_VARARGS_H*/
+#if STDC_HEADERS || HAVE_STDDEF_H
+#  include <stddef.h>
+#endif	/* !__STDC__ */
 
-/* Some systems define this! */
-#undef vfprintf
+#ifndef BUFSIZ
+#  define BUFSIZ 256
+#endif
 
-extern int _doprnt ();
-
-int
-vfprintf (FILE *file, const char *format, va_list ap)
+char *
+readline (char *prompt)
 {
-   return _doprnt (format, ap, file);
+	int lim = BUFSIZ;
+	int i = 0;
+	int isdone = 0;
+	char *buf;
+	
+	printf (prompt);
+	
+	buf = (char *) malloc (lim);
+	
+	while (!isdone) {
+		int c = getc (stdin);
+
+		switch (c) {
+			case EOF:
+				isdone = 1;
+				break;
+
+			case '\n':
+				isdone = 1;
+				break;
+	  
+			default:
+				if (i == lim) {
+					lim *= 2;
+					buf = (char *) realloc (buf, lim);
+				}
+				buf[i++] = (char) c;
+				break;
+		}
+    }
+	buf[i] = 0;
+
+	return *buf ? buf : NULL;
 }

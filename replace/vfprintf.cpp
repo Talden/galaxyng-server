@@ -1,5 +1,5 @@
-/* strcspn.c -- implement strcspn() for architectures without it
-   Copyright (C) 2000 Gary V. Vaughan
+/* vfprintf.cpp -- implement vfprintf() for architectures without it
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,29 +15,26 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#if HAVE_CONFIG_J
+
+#if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-#include <sys/types.h>
+#include <stdio.h>
 
-#if HAVE_STRING_H
-#  include <string.h>
-#elif HAVE_STRINGS_H
-#  include <strings.h>
-#else
-extern char *strchr ();
-#endif
+#if HAVE_STDARG_H && !HAVE_VARARGS_H
+#  include <stdarg.h>
+#else /*!HAVE_STDARG_H || HAVE_VARARGS_H*/
+#  include <varargs.h>
+#endif /*HAVE_STDARG_H && !HAVE_VARARGS_H*/
 
-size_t
-strcspn (const char *string, const char *reject)
+/* Some systems define this! */
+#undef vfprintf
+
+extern int _doprnt ();
+
+int
+vfprintf (FILE *file, const char *format, va_list ap)
 {
-  size_t count = 0;
-  while (strchr (reject, *string) == 0)
-    {
-      ++count, ++string;
-    }
-
-  return count;
+	return _doprnt (format, ap, file);
 }
-

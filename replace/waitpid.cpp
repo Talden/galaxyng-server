@@ -1,5 +1,5 @@
-/* readline.c -- implement readline() for architectures without it.
-   Copyright (C) 2000 Gary V. Vaughan
+/* waitpid.cpp -- implement waitpid() for architectures without it
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,58 +15,23 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-#include <stdio.h>
-
-#if STDC_HEADERS || HAVE_STDDEF_H
-#  include <stddef.h>
-#endif	/* !__STDC__ */
-
-#ifndef BUFSIZ
-#  define BUFSIZ 256
+#include <sys/types.h>		/* for pid_t */
+#if HAVE_SYS_WAIT_H
+#  include <sys/wait.h>
 #endif
 
-char *
-readline (char *prompt)
+pid_t
+waitpid (pid_t pid, int *pstatus, int options)
 {
-  int lim = BUFSIZ;
-  int i = 0;
-  int isdone = 0;
-  char *buf;
-  
-  printf (prompt);
+	pid_t result;
 
-  buf = (char *) malloc (lim);
-      
-  while (!isdone)
-    {
-      int c = getc (stdin);
+	do {
+		result = wait (pstatus);
+	} while  (result >= 0 && result != pid);
 
-      switch (c)
-	{
-	case EOF:
-	  isdone = 1;
-	  break;
-
-	case '\n':
-	  isdone = 1;
-	  break;
-	  
-	default:
-	  if (i == lim)
-	    {
-	      lim *= 2;
-	      buf = (char *) realloc (buf, lim);
-	    }
-	  buf[i++] = (char) c;
-	  break;
-	}
-    }
-  buf[i] = 0;
-
-  return *buf ? buf : NULL;
+	return result;
 }

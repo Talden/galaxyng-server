@@ -1,5 +1,5 @@
-/* strspn.c -- implement strspn() for those architectures without it
-   Copyright (C) 2000 Gary V. Vaughan
+/* strcspn.cpp -- implement strcspn() for architectures without it
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-
 #if HAVE_CONFIG_J
 #  include <config.h>
 #endif
@@ -31,14 +30,13 @@ extern char *strchr ();
 #endif
 
 size_t
-strspn (const *string, const *accept)
+strcspn (const char *string, const char *reject)
 {
-  size_t count = 0;
-  while (strchr (accept, *string))
-    {
-      ++count, ++string;
+	size_t count = 0;
+	while (strchr (reject, *string) == 0) {
+		++count, ++string;
     }
 
-  return count;
+	return count;
 }
 
