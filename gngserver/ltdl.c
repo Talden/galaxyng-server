@@ -1670,6 +1670,7 @@ lt_dlsym (handle, symbol)
 	lt_ptr_t address;
 	lt_dlloader_data_t data;
 
+	fprintf(stderr, "> lt_dlsym(%p, \"%s\")\n", handle, symbol);
 	if (!handle) {
 		last_error = LT_DLSTRERROR(INVALID_HANDLE);
 		return 0;

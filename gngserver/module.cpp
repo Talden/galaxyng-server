@@ -21,6 +21,8 @@
 #endif
 
 #include "gngserver/common.h"
+#include "gngserver/builtin.h"
+#include "gngserver/eval.h"
 #include "gngserver/ltdl.h"
 #include "gngserver/module.h"
 #include "gngserver/gngserver.h"
@@ -30,6 +32,7 @@
 #endif
 
 static int unload_ltmodule (lt_dlhandle module, lt_ptr_t data);
+static int userdata_address_compare (List *elt, void *match);
 
 static char multi_init_error[]
             = "module loader initialised more than once";
@@ -55,11 +58,11 @@ module_error (void)
 int
 module_init (void)
 {
-  static int initialised = 0;
+  static int initialized = 0;
   int errors = 0;
 
   /* Only perform the initialisation once. */
-  if (!initialised) {
+  if (!initialized) {
     /* ltdl should use the same mallocation as us. */
     lt_dlmalloc = (lt_ptr_t (*) (size_t)) xmalloc;
     lt_dlfree = (void (*) (lt_ptr_t)) free;
@@ -69,14 +72,13 @@ module_init (void)
 
     last_error = NULL;
 
-    /* Call ltdl initialisation function. */
+    /* Call ltdl initialization function. */
     errors = lt_dlinit();
 
 
     /* Set up the module search directories. */
     if (errors == 0) {
       const char *path = getenv (GNGS_MODULE_PATH_ENV);
-      cerr << "module search path: \"" << path << "\"" << endl;
       if (path != NULL)
 	errors = lt_dladdsearchdir(path);
       
@@ -89,7 +91,7 @@ module_init (void)
     if (errors != 0)
       last_error = lt_dlerror ();
 
-    ++initialised;
+    ++initialized;
 
     return errors ? GNGSERVER_ERROR : GNGSERVER_OKAY;
     }
@@ -104,18 +106,14 @@ module_load (GNGServer *gngserver, const char *name)
   lt_dlhandle module;
   Builtin *builtin_table;
   Syntax  *syntax_table;
-
   int status = GNGSERVER_OKAY;
 
-  cerr << "looking for module \"";
-
+  std::cerr << "> module_load(\"";
   if (name)
-    cerr << name;
+    std::cerr << name << "\")" << std::endl;
   else
-    cerr << "(NULL)";
+    std::cerr << "\")" << std::endl;
 
-  cerr << "\"" << endl;
-  
   last_error = NULL;
 
   module = lt_dlopenext (name);
@@ -124,6 +122,8 @@ module_load (GNGServer *gngserver, const char *name)
     builtin_table = (Builtin *) lt_dlsym(module, "builtin_table");
     syntax_table = (Syntax *)lt_dlsym(module, "syntax_table");
 
+    std::cerr << "builtin_table: " << builtin_table << std::endl;
+    std::cerr << "syntax_table: " << syntax_table << std::endl;
     if (!builtin_table && !syntax_table) {
       lt_dlclose(module);
       last_error = no_builtin_table_error;
@@ -152,13 +152,23 @@ module_load (GNGServer *gngserver, const char *name)
 					  gngserver->syntax_init);
   }
 
+  std::cerr << "  module: " << module << "  builtin_table: " << builtin_table
+	    << "  syntax_table: " << syntax_table << std::endl;
+
   if (module) {
-    if (builtin_table)
+    if (builtin_table) {
+      std::cerr << "  calling builtin_install(" << gngserver << ", "
+		<< builtin_table << ")" << std::endl;
+
       status = builtin_install (gngserver, builtin_table);
+    }
 
-    if (syntax_table && status == GNGSERVER_OKAY)
+    if (syntax_table && status == GNGSERVER_OKAY) {
+      std::cerr << "  calling syntax_install(" << gngserver << ", "
+		<< module << ", " << syntax_table << ")" << std::endl;
       status = syntax_install (gngserver, module, syntax_table);
-
+    }
+    std::cerr << "> module_load // " << status << std::endl;
     return status;
   }
 
@@ -166,6 +176,7 @@ module_load (GNGServer *gngserver, const char *name)
   if (!last_error)
     last_error = module_not_found_error;
 
+  std::cerr << "> module_load // ERROR" << std::endl;
   return GNGSERVER_ERROR;
 }
 
@@ -212,6 +223,42 @@ unload_ltmodule (lt_dlhandle module, void *data)
     }
   
   if (module) {
+    /* Fetch the addresses of the entrypoints into the module. */
+    Builtin *builtin_table
+      = (Builtin*) lt_dlsym (module, "builtin_table");
+    Syntax *syntax_table
+      = (Syntax *) lt_dlsym (module, "syntax_table");
+    void *syntax_init_address
+      = (void *) lt_dlsym (module, "syntax_init");
+    void **syntax_finish_address
+      = (void **) lt_dlsym (module, "syntax_finish");
+    List *stale;
+
+    /* Remove all references to these entry points in the internal
+       data structures, before actually unloading the module. */
+    stale = list_remove (&unload->gngserver->syntax_init,
+			 syntax_init_address, userdata_address_compare);
+    XFREE (stale);
+        
+    stale = list_remove (&unload->gngserver->syntax_finish,
+			 syntax_finish_address, userdata_address_compare);
+    XFREE (stale);
+
+    if (builtin_table &&
+	builtin_remove (unload->gngserver, builtin_table) != GNGSERVER_OKAY) {
+      last_error = builtin_unload_error;
+      module = NULL;
+    }
+
+    if (syntax_table &&
+	GNGSERVER_OKAY != syntax_remove (unload->gngserver, module,
+					 syntax_table)) {
+      last_error = syntax_unload_error;
+      module = NULL;
+    }
+  }
+  
+  if (module) {
     ModuleFinish *finish_func
       = (ModuleFinish *) lt_dlsym (module, "module_finish");
 
@@ -238,3 +285,8 @@ unload_ltmodule (lt_dlhandle module, void *data)
   return -1;
 }
 
+static int
+userdata_address_compare (List *elt, void *match)
+{
+  return (int) ((char*)elt->userdata - (char*)match);
+}

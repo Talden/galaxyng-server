@@ -41,6 +41,7 @@ Diagnostic::output_message(ostream& os, const char *mode,
   const char *p = message;
   int num;
   double d;
+  char *s;
 
   while (*p) {
     switch (*p) {
@@ -56,7 +57,12 @@ Diagnostic::output_message(ostream& os, const char *mode,
 	d = va_arg(ap, double);
 	os << d;
 	break;
-	
+
+      case 's':
+	s = va_arg(ap, char *);
+	os << s;
+	break;
+
       default:
 	os << "(unknown formatter '" << *p << "')";
 	break;

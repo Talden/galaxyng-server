@@ -33,15 +33,34 @@ int
 builtin_install (GNGServer *gngserver, Builtin *table)
 {
   int status = GNGSERVER_ERROR;
-  
+
+  Builtin *pTbl = table;
+  std::cerr << "> builtin_install(" << gngserver;
+
+  while (pTbl->name) {
+    std::cerr  << ", \"" << pTbl->name << "\" ";
+    pTbl++;
+  }
+
+  std::cerr << ")" << endl;
+
   if (table) {
     BuiltinTab *memory = XMALLOC (BuiltinTab, 1);
+    std::cerr << "  installing from table" << std::endl;
+    builtintab *next = gngserver->builtins;
+    int i = 0;
+    while (next) {
+      std::cerr << i << ") " << next->table->name << std::endl;
+      next = next->next;
+      i++;
+    }
     memory->next = gngserver->builtins;
     memory->table = table;
     gngserver->builtins = memory;
     status = GNGSERVER_OKAY;
   }
 
+  std::cerr << "< builtin_install" << std::endl;
   return status;
 }
 
@@ -50,6 +69,7 @@ builtin_remove (GNGServer *gngserver, Builtin *table)
 {
   int status = GNGSERVER_ERROR;
   
+  std::cerr << "> builtin_remove" << std::endl;
   if (gngserver->builtins && table) {
     BuiltinTab *stale = NULL;
     
@@ -72,6 +92,7 @@ builtin_remove (GNGServer *gngserver, Builtin *table)
     
     XFREE (stale);
   }
+  std::cerr << "< builtin_remove" << std::endl;
   
   return status;
 }
@@ -79,8 +100,11 @@ builtin_remove (GNGServer *gngserver, Builtin *table)
 Builtin *
 builtin_find (GNGServer *gngserver, const char *name)
 {
+  std::cerr << "> builtin_find(\"" << name << "\")" << std::endl;
+
   if (gngserver->builtins) {
     BuiltinTab *p;
+    std::cerr << "  looking through builtin commands" << std::endl;
     for (p = gngserver->builtins; p; p = p->next) {
       int i;
       for (i = 0; p->table[i].name; ++i) {
@@ -89,6 +113,7 @@ builtin_find (GNGServer *gngserver, const char *name)
       }
     }
   }
+  std::cerr << "< builtin_find" << std::endl;
   
   return NULL;
 }

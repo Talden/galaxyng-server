@@ -43,6 +43,7 @@ BUILTIN_DECLARATION(unknown)
   char *path = path_find (argv[0]);
   int status = GNGSERVER_ERROR;
 
+  std::cerr << "> unknown builtin" << std::endl;
   if (!path)
     gngserver_result_append (gngserver, "command \"", argv[0], "\" not found",
 			     NULL);
@@ -52,6 +53,7 @@ BUILTIN_DECLARATION(unknown)
   else
     status = GNGSERVER_OKAY;
 
+  std::cerr << "< unknown builtin" << std::endl;
   return status;
 }
 
@@ -60,6 +62,7 @@ path_find (const char *command)
 {
   char *path = xstrdup (command);
   
+  std::cerr << "> unknown builtin: path_find" << std::endl;
   if (*command == '/') {
     if (access (command, X_OK) < 0)
       goto notfound;
@@ -78,7 +81,7 @@ path_find (const char *command)
       strncat (path, pbeg, len);
       if (path[len -1] != '/') strcat (path, "/");
       strcat (path, command);
-      
+      std::cerr << "  path: \"" << path << "\"" << std::endl;
       if (access (path, X_OK) == 0)
 	break;
     }
@@ -87,10 +90,12 @@ path_find (const char *command)
       goto notfound;
   }
   
+  std::cerr << "< unknown builtin: path_find" << std::endl;
   return path;
   
  notfound:
   XFREE (path);
+  std::cerr << "< unknown builtin: path_find" << std::endl;
   return NULL;
 }  
 
@@ -100,6 +105,7 @@ path_execute (GNGServer *gngserver, const char *path, char *const argv[])
   int status = GNGSERVER_OKAY;        /* assume successful for now */
   pid_t pid;
 
+  std::cerr << "> unknown builtin: path_execute" << std::endl;
   pid = fork ();
   switch (pid) {
   case -1:                    /* fork failed */
@@ -125,5 +131,6 @@ path_execute (GNGServer *gngserver, const char *path, char *const argv[])
     break;
   }
   
+  std::cerr << "< unknown builtin: path_execute" << std::endl;
   return status;
 }

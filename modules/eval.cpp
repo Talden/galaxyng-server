@@ -38,6 +38,7 @@ BUILTIN_DECLARATION (eval)
   Tokens *tokens;
   char *command;
 
+  std::cerr << "> eval builtin" << std::endl;
   {
     Tokens tmp;
     tmp.argv = (char **) &argv[1];
@@ -63,6 +64,7 @@ BUILTIN_DECLARATION (eval)
   XFREE (tokens->argv);
   XFREE (tokens);
   XFREE (command);
+  std::cerr << "< eval builtin" << std::endl;
   
   return status;
 }

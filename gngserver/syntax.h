@@ -36,40 +36,40 @@ struct gngserver;
 			     BufferOut *out)
 
 typedef struct {
-	char *start;			/* start of buffered string */
-	size_t i;			/* offset to next unused char */
-	size_t lim;			/* upper limit for I */
+  char *start;			/* start of buffered string */
+  size_t i;			/* offset to next unused char */
+  size_t lim;			/* upper limit for I */
 } Buffer;
 
 typedef struct {
-	Buffer buf;			/* the buffer details */
-	char *start;			/* start of the current command */
+  Buffer buf;			/* the buffer details */
+  char *start;			/* start of the current command */
 } BufferIn;
 
 typedef struct {
-	Buffer buf;			/* the buffer details */
-	int *offv;			/* vector of offsets */
-	size_t offc;			/* count of offsets in OFFV */
-	size_t argind;		/* offset to start of current argument */
+  Buffer buf;			/* the buffer details */
+  int *offv;			/* vector of offsets */
+  size_t offc;			/* count of offsets in OFFV */
+  size_t argind;		/* offset to start of current argument */
 } BufferOut;
 
 typedef int SyntaxHandler (struct gngserver *gngserver,
-						   BufferIn *in, BufferOut *out);
+			   BufferIn *in, BufferOut *out);
 typedef int SyntaxInit    (struct gngserver *gngserver);
 typedef int SyntaxFinish  (struct gngserver *gngserver,
-						   BufferIn *in, BufferOut *out);
+			   BufferIn *in, BufferOut *out);
 
 typedef struct syntaxnode SyntaxTable;
 
 typedef struct syntax {
-	SyntaxHandler *handler;
-	char *ch;
+  SyntaxHandler *handler;
+  char *ch;
 } Syntax;
 
 extern int syntax_install (struct gngserver *gngserver, lt_dlhandle module,
-						   Syntax *table);
+			   Syntax *table);
 extern int syntax_remove  (struct gngserver *gngserver, lt_dlhandle module,
-						   Syntax *table);
+			   Syntax *table);
 extern SyntaxHandler *syntax_handler (struct gngserver *gngserver, int ch);
 
 #endif /* !SYNTAX_H */

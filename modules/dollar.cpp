@@ -57,11 +57,13 @@ BUILTIN_DECLARATION (set)
 {
   int status = gngserverstate_set(gngserver, argv[1], xstrdup (argv[2]), free);
 
+  std::cerr << "> dollar builtin: set" << std::endl;
   if (status != GNGSERVER_OKAY) {
     gngserver_result_clear (gngserver);
     gngserver_result_append (gngserver, "\"", argv[1], "\" not set", NULL);
   }
     
+  std::cerr << "< dollar builtin: set" << std::endl;
   return status;
 }
 
@@ -69,6 +71,8 @@ BUILTIN_DECLARATION (unset)
 {
   int status = GNGSERVER_OKAY;
   int i, errors = 0;
+
+  std::cerr << "> dollar builtin: unset" << std::endl;
 
   for (i = 1; argv[i]; ++i) {
     if (gngserverstate_clear (gngserver, argv[i]) != GNGSERVER_OKAY) {
@@ -82,6 +86,9 @@ BUILTIN_DECLARATION (unset)
       status = GNGSERVER_ERROR;
     }
   }
+
+  std::cerr << "< dollar builtin: unset" << std::endl;
+
   return status;
 }
 
@@ -89,6 +96,8 @@ SYNTAX_DECLARATION (subst)
 {
   char *value = NULL;
   int status = substitute (gngserver, in, &value);
+
+  std::cerr << "> dollar builtin: subst (syntax) " << std::endl;
 
   if (value) {
     size_t len = strlen (value);
@@ -103,6 +112,7 @@ SYNTAX_DECLARATION (subst)
     XFREE (value);
   }
 
+  std::cerr << "< dollar builtin: subst (syntax) " << std::endl;
   return status;
 }
 
@@ -111,6 +121,8 @@ substitute (GNGServer *gngserver, BufferIn *in, char **pvalue)
 {
   int status = GNGSERVER_ERROR;
   
+  std::cerr << "> dollar builtin: substitute" << std::endl;
+
   switch (in->buf.start[1 + in->buf.i]) {
   case '(': /* command substitution */
     {
@@ -148,6 +160,7 @@ substitute (GNGServer *gngserver, BufferIn *in, char **pvalue)
     break;
   }
 
+  std::cerr << "< dollar builtin: substitute" << std::endl;
   return status;
 }
 
@@ -158,12 +171,15 @@ extract_variable (GNGServer *gngserver, BufferIn *in)
   char *name;
   int len = 1;
 
+  std::cerr << "> dollar builtin: extract_variable" << std::endl;
+
   while (ptr[len] && syntax_handler (gngserver, ptr[len]) == 0)
     ++len;
   name = strncpy ((char*)xmalloc (len), 1 + ptr, len -1);
   name[len -1] = 0;
   in->buf.i += len;
   
+  std::cerr << "< dollar builtin: extract_variable" << std::endl;
   return name;
 }
 
@@ -174,6 +190,8 @@ extract_substcmd (GNGServer *gngserver, BufferIn *in)
   char *substcmd = NULL;
   int paren;
   int len;
+
+  std::cerr << "> dollar builtin: extract_substcmd" << std::endl;
 
   for (len = 2, paren = 1; paren; ++len) {
     switch (in->buf.start[in->buf.i + len]) {
@@ -198,6 +216,7 @@ extract_substcmd (GNGServer *gngserver, BufferIn *in)
   substcmd[len -3] = 0;
   in->buf.i += len;
 
+  std::cerr << "< dollar builtin: extract_substcmd" << std::endl;
   return substcmd;
 }
 
@@ -209,6 +228,8 @@ execute_and_collect (GNGServer *gngserver, const char *line, char **pvalue)
   int pid;
 
   GNGS_ASSERT (line);
+
+  std::cerr << "> dollar builtin: execute_and_collect" << std::endl;
 
   pipe (fildes);
   pid = fork ();
@@ -285,5 +306,6 @@ execute_and_collect (GNGServer *gngserver, const char *line, char **pvalue)
     (*pvalue)[dest] = 0;
   }
   
+  std::cerr << "< dollar builtin: execute_and_collect" << std::endl;
   return (status == GNGSERVER_OKAY) ? GNGSERVER_CONTINUE : status;
 }

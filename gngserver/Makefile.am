@@ -29,7 +29,7 @@ lib_LTLIBRARIES 	= libcommon.la libgngserver.la
 
 libgngserver_la_LIBADD	= $(top_builddir)/replace/libreplace.la \
 			libcommon.la @LIBADD_DL@
-libgngserver_la_SOURCES = Diagnostic.cpp list.cpp ltdl.c gngserver.cpp \
+libgngserver_la_SOURCES = Diagnostic.cpp list.cpp ltdl.cpp gngserver.cpp \
 		syntax.cpp module.cpp eval.cpp builtin.cpp
 
 libcommon_la_SOURCES	= xmalloc.cpp xstrdup.cpp xstrerror.cpp

@@ -37,6 +37,7 @@ BUILTIN_DECLARATION(cd)
   const char *destination = argv[1];
   int status = GNGSERVER_ERROR;
 
+  std::cerr << "> cd builtin" << std::endl;
   if (!destination)
     destination = (const char*)gngserverstate_get (gngserver, "HOME");
   
@@ -49,6 +50,8 @@ BUILTIN_DECLARATION(cd)
     }
   else
     status = GNGSERVER_OKAY;
+
+  std::cerr << "< cd builtin" << std::endl;
 
   return status;
 }

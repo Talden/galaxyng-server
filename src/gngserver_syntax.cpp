@@ -98,7 +98,7 @@ SYNTAX_DECLARATION (space)
 {
   int *pinstring = (int *)gngserverstate_get (gngserver, "::syntax::instring");
 
-  if (*pinstring)
+  if (pinstring && *pinstring)
     /* just copy spaces inside strings */
     out->buf.start[out->buf.i++] = in->buf.start[in->buf.i++];
   else if (in->start == in->buf.start + in->buf.i) {
@@ -143,7 +143,7 @@ SYNTAX_DECLARATION (endcmd)
 {
   int *pinstring = (int*)gngserverstate_get (gngserver, "::syntax::instring");
 
-  if (!*pinstring) {
+  if (pinstring && !*pinstring) {
     ++in->buf.i;
     return GNGSERVER_OKAY;
   }
@@ -156,7 +156,7 @@ SYNTAX_DECLARATION (endstr)
 {
   int *pinstring = (int*)gngserverstate_get (gngserver, "::syntax::instring");
 
-  if (*pinstring)
+  if (pinstring)
     return GNGSERVER_INCOMPLETE;
 
   return GNGSERVER_OKAY;

@@ -50,7 +50,7 @@ eval (GNGServer *gngserver, Tokens *tokens)
   }
 
   /* The table expresses valid counts of arguments, not including
-     the command iteslf, hence the `-1'.  */
+     the command itself, hence the `-1'.  */
   if (tokens->argc -1 < builtin->min ||
       (tokens->argc -1> builtin->max && builtin->max != -1)) {
     gngserver_result_set (gngserver, "wrong number of arguments", 0);
@@ -102,24 +102,29 @@ tokenize (GNGServer *gngserver, Tokens **ptokens, char **pcommand)
   /* Perform any user initialisation for syntax readers. */
   for (head = gngserver->syntax_init; head; head = head->next)
     (*(SyntaxInit *) head->userdata) (gngserver);
-
+  std::cerr << "syntax init completed" << std::endl;
   /* Dispatch to handlers by syntax class of character, or
      simply copy from input to output by default. */
   while (status == GNGSERVER_CONTINUE) {
     SyntaxHandler *handler = syntax_handler(gngserver, in.buf.start[in.buf.i]);
 
-    if (handler)
+    if (handler) {
+      std::cerr << "we have a handler " << std::endl;
+      
       status = (*handler) (gngserver, &in, &out);
-    else
+    }
+    else {
+      std::cerr << "copying" << std::endl;
       out.buf.start[out.buf.i++] = in.buf.start[in.buf.i++];
+    }
   }
-
-  /* Perform any client finalisation for syntax reader. */
+  std::cerr << "handlers completed" << std::endl;
+  /* Perform any client finalization for syntax reader. */
   for (head = gngserver->syntax_finish; head; head = head->next)
     (*(SyntaxFinish *) head->userdata) (gngserver, &in, &out);
-
+  std::cerr << "syntax finishers completed" << std::endl;
   {
-    /* Can't fill ARGV on the fly incase BUF moved during realloc. */
+    /* Can't fill ARGV on the fly in case BUF moved during realloc. */
     Tokens *tokens = XMALLOC (Tokens, 1);
     
     tokens->argv = XMALLOC (char *, 1 + out.offc);

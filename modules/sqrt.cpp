@@ -39,6 +39,7 @@ BUILTIN_DECLARATION(sqrt)
   int status = GNGSERVER_ERROR;
   long argument =   strtol (argv[1], &endptr, 0);
 
+  std::cerr << "> sqrt builtin" << std::endl;
   if  (!endptr || *endptr != 0) {
     gngserver_result_clear (gngserver);
     gngserver_result_append (gngserver, "\"", argv[1],
@@ -53,5 +54,7 @@ BUILTIN_DECLARATION(sqrt)
     status = GNGSERVER_OKAY;
   }
   
+  std::cerr << "< sqrt builtin" << std::endl;
+
   return status;
 }

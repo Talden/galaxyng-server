@@ -27,7 +27,7 @@
 #  include <readline/history.h>
 #endif
 
-#include "eval.h"
+#include "gngserver/eval.h"
 #include "gngserver_repl.h"
 
 #ifndef BUFSIZ
@@ -66,6 +66,7 @@ source (GNGServer *gngserver, const char *path)
 int
 evalstream (GNGServer *gngserver, FILE *stream)
 {
+  Diagnostic *dia = new Diagnostic("GNGServer");
   int status = GNGSERVER_EXIT;
   char *line;
 
@@ -74,6 +75,7 @@ evalstream (GNGServer *gngserver, FILE *stream)
   line = getline (stream, (char*)gngserverstate_get (gngserver, "PS1"));
   
   while (line) {
+    std::cerr << "evaluating line \"" << line << "\"" << std::endl;
     status = evalline (gngserver, &line);
     
     switch (status) {
@@ -98,7 +100,7 @@ evalstream (GNGServer *gngserver, FILE *stream)
       /*NOBREAK*/
       
     case GNGSERVER_ERROR:
-      fprintf (stderr, "%s.\n", gngserver_result_get (gngserver));
+      dia->Fatal(std::cerr, "%s.\n", gngserver_result_get (gngserver));
       /*NOBREAK*/
       
     default:
@@ -124,9 +126,10 @@ evalline (GNGServer *gngserver, char **pline)
   
   while (status != GNGSERVER_INCOMPLETE && *command) {
     Tokens *tokens;
-    
+    std::cerr << "tokenizing \"" << command << "\"" << std::endl;
     status = tokenize (gngserver, &tokens, &command);
-    
+    std::cerr << "finished tokenizing" << std::endl;
+
     if ((status == GNGSERVER_OKAY)
 	&& tokens && tokens->argv && tokens->argv[0] && *tokens->argv[0])
       status = eval (gngserver, tokens);
