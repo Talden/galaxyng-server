@@ -23,3 +23,5 @@ INCLUDES	  = -I$(top_builddir) -I$(top_builddir)/gngserver \
 noinst_HEADERS	  = 
 
 bin_PROGRAMS	  = gngserver
+
+gngserver_SOURCES       = gngserver.cpp

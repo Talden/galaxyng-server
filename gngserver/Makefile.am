@@ -21,18 +21,18 @@ EXTRA_DIST		= common-h.in
 AM_CPPFLAGS		= -DMODULE_PATH=\"$(libdir)/@PACKAGE@\"
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir)
 
-pkginclude_HEADERS 	= common.h Diagnostic.h list.h gngserver.h list.h \
+pkginclude_HEADERS 	= #common.h Diagnostic.h list.h gngserver.h list.h \
 			  syntax.h module.h eval.h builtin.h
-noinst_HEADERS 	= ltdl.h
+noinst_HEADERS 	= #ltdl.h
 
 lib_LTLIBRARIES 	= libcommon.la libgngserver.la
 
 libgngserver_la_LIBADD	= $(top_builddir)/replace/libreplace.la \
 			libcommon.la @LIBADD_DL@
-libgngserver_la_SOURCES = Diagnostic.cpp list.cpp ltdl.cpp gngserver.cpp \
+libgngserver_la_SOURCES = gngserver.cpp #Diagnostic.cpp list.cpp ltdl.cpp \
 		syntax.cpp module.cpp eval.cpp builtin.cpp
 
-libcommon_la_SOURCES	= xmalloc.cpp xstrdup.cpp xstrerror.cpp
+libcommon_la_SOURCES	= #xmalloc.cpp xstrdup.cpp xstrerror.cpp
 
 # Regenerate common.h with config.status whenever common-h.in changes.
 common.h: stamp-common

@@ -1,0 +1,23 @@
+/*  -*- Mode: C -*-
+ */
+
+#ifndef GNGSERVER_COMMON_H_
+#define GNGSERVER_COMMON_H_ 1
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
+#ifndef errno
+/* Some sytems #define this! */
+extern int errno;
+#endif
+#include <string.h>
+
+#include <assert.h>
+#define GNG_ASSERT assert
+
+
+#endif /* !GNGSERVER_COMMON_H */
