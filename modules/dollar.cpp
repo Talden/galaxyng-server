@@ -132,7 +132,7 @@ substitute (GNGServer *gngserver, BufferIn *in, char **pvalue)
 	break;
       }
 	
-      value = gngserverstate_get (gngserver, name);
+      value = (char*)gngserverstate_get (gngserver, name);
       if (value == NULL) {
 	gngserver_result_clear (gngserver);
 	gngserver_result_append (gngserver, "\"", name,
@@ -160,7 +160,7 @@ extract_variable (GNGServer *gngserver, BufferIn *in)
 
   while (ptr[len] && syntax_handler (gngserver, ptr[len]) == 0)
     ++len;
-  name = strncpy (xmalloc (len), 1 + ptr, len -1);
+  name = strncpy ((char*)xmalloc (len), 1 + ptr, len -1);
   name[len -1] = 0;
   in->buf.i += len;
   
@@ -170,7 +170,7 @@ extract_variable (GNGServer *gngserver, BufferIn *in)
 static char *
 extract_substcmd (GNGServer *gngserver, BufferIn *in)
 {
-  int *pinstring = gngserverstate_get (gngserver, "::syntax::instring");
+  int *pinstring = (int*)gngserverstate_get (gngserver, "::syntax::instring");
   char *substcmd = NULL;
   int paren;
   int len;
@@ -193,7 +193,8 @@ extract_substcmd (GNGServer *gngserver, BufferIn *in)
       break;
     }
   }
-  substcmd = strncpy (xmalloc (len -2), &in->buf.start[2 + in->buf.i], len -3);
+  substcmd = strncpy ((char*)xmalloc(len -2), &in->buf.start[2 + in->buf.i],
+		      len -3);
   substcmd[len -3] = 0;
   in->buf.i += len;
 
@@ -207,14 +208,14 @@ execute_and_collect (GNGServer *gngserver, const char *line, char **pvalue)
   int fildes[2];
   int pid;
 
-  GNGSERVER_ASSERT (line);
+  GNGS_ASSERT (line);
 
   pipe (fildes);
   pid = fork ();
   switch (pid) {
   case -1:			/* fork failed */
     status = GNGSERVER_ERROR;
-    gngserver_result_set (gngserver, "fork failed", -1);
+    gngserver_result_set (gngserver, "fork failed", 0);
     break;
 
   case 0:			/* in child process */
