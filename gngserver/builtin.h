@@ -30,10 +30,7 @@
 /* Declaration generator. */
 #define BUILTIN_DECLARATION(name)				\
 	int														\
-	CONC(builtin_, name) (gngserver, argc, argv)			\
-         GNGServer *gngserver;										\
-	     int argc;						\
-	     char *const argv[];
+	CONC(builtin_, name) (GNGServer *gngserver, int argc, char *const argv[])
 
 typedef int (*builtin_handler)(GNGServer *gngserver, int argc, char *const argv[]);
 

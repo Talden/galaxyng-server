@@ -26,6 +26,10 @@ using namespace std;
 #include <cppunit/extensions/HelperMacros.h>
 #include "gngObject.h"
 
+///\brief test suite using cppunit (a port of JUnit) for running unit tests
+///
+/// I am using cppunit for generating tests for the code as I go
+/// along. CPPUnit is a port of JUnit.
 class gngObjectTest : public CppUnit::TestFixture
 {
   gngObject* go;
@@ -35,9 +39,13 @@ class gngObjectTest : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE_END();
 
  public:
+  /// setUp is to set up common variables for the suite of tests.
   void setUp();
+
+  /// tearDown is to clean up common variables for the suite of tests.
   void tearDown();
 
+  /// builds up the tests for the suite.
   void testConstructor();
 };
 

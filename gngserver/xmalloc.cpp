@@ -25,6 +25,7 @@
 #include "common.h"
 #include "Diagnostic.h"
 
+///\brief allocate memory and clear it with existence check
 void *
 xcalloc (size_t num, size_t size)
 {
@@ -33,7 +34,7 @@ xcalloc (size_t num, size_t size)
   void *memory = calloc (num, size);
   if (!memory) {
     Diagnostic *dia = new Diagnostic("xcalloc");
-    dia->Fatal ("Memory exhausted");
+    dia->Fatal (cerr, "Memory exhausted");
   }
 #else
   void *memory = xmalloc (num * size);
@@ -43,7 +44,7 @@ xcalloc (size_t num, size_t size)
   return memory;
 }
      
-
+///\brief allocate memory with existence check
 void *
 xmalloc (size_t num)
 {
@@ -51,12 +52,13 @@ xmalloc (size_t num)
 
   if (!memory) {
     Diagnostic *dia = new Diagnostic("xmalloc");
-    dia->Fatal ("Memory exhausted");
+    dia->Fatal (cerr, "Memory exhausted");
   }
 
   return memory;
 }
 
+///\brief reallocate memory with existence check
 void *
 xrealloc (void *p, size_t num)
 {
@@ -69,7 +71,7 @@ xrealloc (void *p, size_t num)
 
   if (!memory) {
     Diagnostic *dia = new Diagnostic("xrealloc");
-    dia->Fatal ("Memory Exhausted");
+    dia->Fatal (cerr, "Memory Exhausted");
   }
 
   return memory;

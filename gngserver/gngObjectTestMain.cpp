@@ -2,7 +2,7 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-
+///\brief driver program for running tests
 int
 main(int argc, char* argv[])
 {

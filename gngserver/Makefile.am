@@ -21,16 +21,15 @@ EXTRA_DIST		= common-h.in
 AM_CPPFLAGS		= -DMODULE_PATH=\"$(libdir)/@PACKAGE@\"
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir)
 
-pkginclude_HEADERS 	= common.h Diagnostic.h list.h gngserver.h
+pkginclude_HEADERS 	= common.h Diagnostic.h list.h gngserver.h list.h syntax.h
 noinst_HEADERS 	= ltdl.h
 
-## @start 1
-lib_LTLIBRARIES 	= libcommon.la libsic.la
+lib_LTLIBRARIES 	= libcommon.la libgngserver.la
 
-libsic_la_LIBADD	= $(top_builddir)/replace/libreplace.la \
+libgngserver_la_LIBADD	= $(top_builddir)/replace/libreplace.la \
 			libcommon.la @LIBADD_DL@
-libsic_la_SOURCES 	= Diagnostic.cpp list.cpp ltdl.c gngserver.cpp
-## @end 1
+libgngserver_la_SOURCES 	= Diagnostic.cpp list.cpp ltdl.c gngserver.cpp \
+		syntax.cpp
 
 libcommon_la_SOURCES	= xmalloc.cpp xstrdup.cpp xstrerror.cpp
 

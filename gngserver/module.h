@@ -15,10 +15,10 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/** @start 1 */
-#ifndef GNGS_MODULE_H
-#define GNGS_MODULE_H 1
+#ifndef MODULE_H
+#define MODULE_H 1
 
+#include <gngserver/builtin.h>
 #include <gngserver/common.h>
 #include <gngserver/gngserver.h>
 
@@ -30,5 +30,4 @@ extern int module_init          (void);
 extern int module_load          (GNGServer *gngserver, const char *name);
 extern int module_unload        (GNGServer *gngserver, const char *name);
 
-#endif /* !GNGS_MODULE_H */
-/** @end 1 */
+#endif /* !MODULE_H */

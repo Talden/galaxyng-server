@@ -1,4 +1,4 @@
-/* error.cpp -- display formatted error diagnostics of varying severity
+/* Diagnostic.cpp -- display formatted error diagnostics of varying severity
    Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,9 @@
 #include "Diagnostic.h"
 
 
-Diagnostic::Diagnostic()
+Diagnostic::Diagnostic(string programName)
 {
+	m_programName = programName;
 }
 
 Diagnostic::~Diagnostic()
@@ -33,88 +34,90 @@ Diagnostic::~Diagnostic()
 }
 
 ostream&
-Diagnostic::output_message(const char *mode, const char *message, va_list ap)
+Diagnostic::output_message(ostream& os, const char *mode,
+						   const char *message, va_list ap)
 {
-  m_os << m_program_name << ": " << mode << ": ";
-  const char *p = message;
-  int num;
-  double d;
+	os << m_programName << ": " << mode << ": ";
+	const char *p = message;
+	int num;
+	double d;
 
-  while (*p) {
-    switch (*p) {
-    case '%':
-      p++;
-      switch (*p) {
-      case 'd':
-	num = va_arg(ap, int);
-	m_os << num;
-	break;
+	while (*p) {
+		switch (*p) {
+			case '%':
+				p++;
+				switch (*p) {
+					case 'd':
+						num = va_arg(ap, int);
+						os << num;
+						break;
+						
+					case 'f':
+						d = va_arg(ap, double);
+						os << d;
+						break;
+						
+					default:
+						os << "(unknown formatter '" << *p << "')";
+						break;
+				}
+				break;
 
-      case 'f':
-	d = va_arg(ap, double);
-	m_os << d;
-	break;
+			case '\\':
+				p++;
+				switch(*p) {
+					case '\\':
+						os << "\\";
+						break;
+						
+					case 't':
+						os << "\t";
+						break;
 
-      default:
-	m_os << "(unknown formatter '" << *p << "')";
-	break;
-      }
-      break;
+					case 'n':
+						os << "\n";
+						break;
 
-    case '\\':
-      p++;
-      switch(*p) {
-      case '\\':
-	m_os << "\\";
-	break;
-
-      case 't':
-	m_os << "\t";
-	break;
-
-      case 'n':
-	m_os << "\n";
-	break;
-
-      default:
-	m_os << "(unknown escape: '" << *p << "')";
-	break;
-      }
-      break;
-      
-    default:
-      m_os << *p;
-    }
-  }
-  return m_os;
+					default:
+						os << "(unknown escape: '" << *p << "')";
+						break;
+				}
+				break;
+				
+			default:
+				os << *p;
+		}
+	}
+	
+	return os;
 }
 
 ostream&
-Diagnostic::Warning(const char *message, ...)
+Diagnostic::Warning(ostream& os, const char *message, ...)
 {
   va_list ap;
   va_start (ap, message);
-  ostream& os = output_message("WARNING", message, ap);
+  output_message(os, "WARNING", message, ap);
   va_end (ap);
   return os;
 }
 
 ostream&
-Diagnostic::Error(const char *message, ...)
+Diagnostic::Error(ostream& os, const char *message, ...)
 {
   va_list ap;
   va_start (ap, message);
-  ostream& os = output_message("ERROR", message, ap);
+  output_message(os, "ERROR", message, ap);
   va_end (ap);
   return os;
 }
 
 ostream&
-Diagnostic::Fatal(const char *message, ...)
+Diagnostic::Fatal(ostream& os, const char *message, ...)
 {
   va_list ap;
   va_start (ap, message);
-  (void)output_message("FATAL", message, ap);
+  (void)output_message(os, "FATAL", message, ap);
   va_end (ap);
   exit(EXIT_FAILURE);
 }

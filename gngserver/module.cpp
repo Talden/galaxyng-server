@@ -16,7 +16,6 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/** @start 1 */
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -30,13 +29,8 @@
 #  define GNGS_MODULE_PATH_ENV   "GNGS_MODULE_PATH"
 #endif
 
-/** @end 1 */
-/** @start 4 */
 static int unload_ltmodule (lt_dlhandle module, lt_ptr_t data);
 
-/** @end 4 */
-
-/** @start 2 */
 static char multi_init_error[]
             = "module loader initialised more than once";
 static char no_builtin_table_error[]
@@ -58,8 +52,6 @@ module_error (void)
   return last_error;
 }
 
-/** @end 2 */
-/** @start 1 */
 int
 module_init (void)
 {
@@ -103,8 +95,7 @@ module_init (void)
   last_error = multi_init_error;
   return GNGS_ERROR;
 }
-/** @end 1 */
-/** @start 3 */
+
 int
 module_load (GNGServer *gngserver, const char *name)
 {
@@ -128,8 +119,7 @@ module_load (GNGServer *gngserver, const char *name)
 
   return GNGS_ERROR;
 }
-/** @end 3 */
-/** @start 4 */
+
 struct unload_data {GNGServer *gngserver; const char *name; };
 
 int
@@ -152,8 +142,7 @@ module_unload (GNGServer *gngserver, const char *name)
     
   return GNGS_ERROR;
 }
-/** @end 4 */
-/** @start 5 */
+
 /* This callback returns `0' if the module was not yet found.
    If there is an error, LAST_ERROR will be set, otherwise the
    module was successfully unloaded. */
@@ -200,4 +189,3 @@ unload_ltmodule (lt_dlhandle module, void *data)
   return -1;
 }
 
-/** @end 5 */

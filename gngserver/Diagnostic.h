@@ -16,8 +16,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#if !defined(GNGS_DIAGNOSTIC_H)
-#define GNGS_DIAGNOSTIC_H 1
+#if !defined(DIAGNOSTIC_H)
+#define DIAGNOSTIC_H 1
 
 #include <iostream>
 #include <string>
@@ -25,19 +25,20 @@ using namespace std;
 
 #include <gngserver/common.h>
 
-class Diagnostic : public iostream
+class Diagnostic
 {
  public:
   Diagnostic(string programName);
   ~Diagnostic();
 
-  ostream& Warning(const char *message, ...);
-  ostream& Error(const char *message, ...);
-  ostream& Fatal(const char *message, ...);
+  ostream& Warning(ostream& os, const char *message, ...);
+  ostream& Error(ostream& os, const char *message, ...);
+  ostream& Fatal(ostream& os, const char *message, ...);
   
  private:
-  string m_program_name;
-  ostream& output_message(const char *tag, const char *message, va_list ap);
+  string m_programName;
+  ostream& output_message(ostream& os, const char *tag,
+						  const char *message, va_list ap);
 };
 
-#endif /* !GNGS_DIAGNOSTICS_H */
+#endif /* !DIAGNOSTICS_H */

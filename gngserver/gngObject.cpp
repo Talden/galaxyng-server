@@ -1,4 +1,4 @@
-/* gngObject.cpp -- read and store incoming orders
+/* gngObject.cpp -- read and store incoming commands
    Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ gngObject::gngObject(istream& is)
 }
 
 /// \brief the destructor cleans up the owned objects.
-
+///
 /// we need to free up the envelope and orders upon object deletion.
 gngObject::~gngObject()
 {
