@@ -1,7 +1,5 @@
-## @start 1
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## @end 1
-## Copyright (C) 2000 Gary V. Vaughan
+## Copyright 2004 Kenneth D. Weinert
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,34 +17,30 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-## @start 1
 INCLUDES        = -I$(top_builddir) -I$(top_srcdir) \
-                -I$(top_builddir)/sic -I$(top_srcdir)/sic \
+                -I$(top_builddir)/gngserver -I$(top_srcdir)/gngserver \
                 -I$(top_builddir)/src -I$(top_srcdir)/src
 
 pkglib_LTLIBRARIES = unknown.la
 
-## @end 1
 pkglib_LTLIBRARIES += cd.la dollar.la eval.la sqrt.la
 
-cd_la_SOURCES = cd.c
+cd_la_SOURCES = cd.cpp
 cd_la_LDFLAGS = -no-undefined -module -avoid-version
-cd_la_LIBADD  = $(top_builddir)/sic/libsic.la
+cd_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
 
-dollar_la_SOURCES = dollar.c
+dollar_la_SOURCES = dollar.cpp
 dollar_la_LDFLAGS = -no-undefined -module -avoid-version
-dollar_la_LIBADD  = $(top_builddir)/sic/libsic.la
+dollar_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
 
-eval_la_SOURCES = eval.c
+eval_la_SOURCES = eval.cpp
 eval_la_LDFLAGS = -no-undefined -module -avoid-version
-eval_la_LIBADD  = $(top_builddir)/sic/libsic.la
+eval_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
 
-sqrt_la_SOURCES = sqrt.c
+sqrt_la_SOURCES = sqrt.cpp
 sqrt_la_LDFLAGS = -no-undefined -module -avoid-version
-sqrt_la_LIBADD  = $(top_builddir)/sic/libsic.la -lm
+sqrt_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la -lm
 
-## @start 2
-unknown_la_SOURCES = unknown.c
+unknown_la_SOURCES = unknown.cpp
 unknown_la_LDFLAGS = -no-undefined -module -avoid-version
-unknown_la_LIBADD  = $(top_builddir)/sic/libsic.la
-## @end 2
+unknown_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
