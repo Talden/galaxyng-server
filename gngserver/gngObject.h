@@ -16,6 +16,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #if !defined(GNGOBJECT_H)
 #define GNGOBJECT_H
 
@@ -26,20 +27,34 @@
 #include "Envelope.h"
 #include "Orders.h"
 
+/** 
+ * \brief The gngObject class encompasses input to the server, whether
+ * that be from email, direct connection, html form, etc.
+ *
+ * The GNGServer will allow several methods of contact for receiving
+ * commands from players and the GM and the subsequent sending of
+ * feedback to the contact entity. This object is meant to encompass
+ * all of the defined methods so the remainder of the program can
+ * remain ignorant of how the data is sent and received.
+ */
 class gngObject
 {
  public:
-  gngObject();
+  /// \brief the constructor takes an istream&
+  ///
+  /// The constructor takes an istream& and then reads and stores the
+  /// lines into the envelope and orders objects.
+  gngObject(istream& is);
+
   ~gngObject();
 
-  bool init(istream&is);
-
+  /// \brief report on the number of lines in the envelope object
   int  envelopeLines() { return m_env->size(); };
+
+  /// \brief report on the number of lines in the orders object
   int  ordersLines() { return m_orders->size(); };
 
  private:
-  friend bool operator !(gngObject& go);
-
   Envelope *m_env;
   Orders   *m_orders;
 };

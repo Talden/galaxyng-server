@@ -18,21 +18,11 @@
 
 #include "gngObject.h"
 
-gngObject::gngObject()
+gngObject::gngObject(istream& is)
 {
   m_env = new Envelope();
   m_orders = new Orders();
-}
 
-gngObject::~gngObject()
-{
-  delete m_env;
-  delete m_orders;
-}
-
-bool
-gngObject::init(istream& is)
-{
   bool inHeader = true;
   string line;
 
@@ -48,10 +38,14 @@ gngObject::init(istream& is)
   while (getline(is, line, '\n' )) {
     m_orders->m_lines.push_back(line);
   }
+
 }
 
-bool
-gngObject::operator !(gngObject& go)
+/// \brief the destructor cleans up the owned objects.
+
+/// we need to free up the envelope and orders upon object deletion.
+gngObject::~gngObject()
 {
-  return true;
+  delete m_env;
+  delete m_orders;
 }
