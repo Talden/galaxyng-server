@@ -15,13 +15,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-AC_INIT(gngserver/error.cpp)
+AC_INIT(gngserver/Diagnostic.cpp)
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h:config-h.in)
 AM_INIT_AUTOMAKE(gngserver, 0.1.0)
 AM_PATH_CPPUNIT(1.9.6)
 
 AC_PROG_CXX
+AC_LANG_CPLUSPLUS
 AC_LIBTOOL_DLOPEN
 AC_PROG_INSTALL
 AM_PROG_LIBTOOL
@@ -191,34 +192,32 @@ _EOF_
 
     ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
     if test x$ac_cv_func_basename = xno; then
-      echo 'extern char *basename PARAMS((const char *path));' >> ${tmpfile}2
+      echo 'extern char *basename (const char *path);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strcspn = xno; then
-      echo 'extern size_t strcspn PARAMS((const char *string, const char *accept));' >> ${tmpfile}2
+      echo 'extern size_t strcspn (const char *string, const char *accept);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strerror = xno; then
-      echo 'extern char *strerror PARAMS((int err));' >> ${tmpfile}2
+      echo 'extern char *strerror (int err);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strsignal = xno; then
-      echo 'extern char *strsignal PARAMS((int signo));' >> ${tmpfile}2
+      echo 'extern char *strsignal (int signo);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strspn = xno; then
-      echo 'extern size_t strspn PARAMS((const char *string, const char *reject));' >> ${tmpfile}2
+      echo 'extern size_t strspn (const char *string, const char *reject);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_vfprintf = xno; then
-      echo 'extern int vfprintf PARAMS((FILE *file, const char *format, va_list ap));' >> ${tmpfile}2
+      echo 'extern int vfprintf (FILE *file, const char *format, va_list ap);' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_waitpid = xno; then
-      echo 'extern pid_t waitpid PARAMS((pid_t pid, int *pstatus, int options));' >> ${tmpfile}2
+      echo 'extern pid_t waitpid (pid_t pid, int *pstatus, int options);' >> ${tmpfile}2
     fi
 
     if test -f ${tmpfile}2; then
       cat >> $tmpfile << '_EOF_'
 
-BEGIN_C_DECLS
 _EOF_
       cat ${tmpfile}2 >> $tmpfile
-      echo 'END_C_DECLS' >> $tmpfile
       ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
     fi
 
@@ -260,9 +259,6 @@ _EOF_
   ac_cv_header_unistd_h=$ac_cv_header_unistd_h
   ac_cv_header_varargs_h=$ac_cv_header_varargs_h
 ])
-
-#LTLIBOBJS=`echo "$LIBOBJS"|sed 's,\.o ,.lo ,g;s,\.o$,.lo,'`
-#AC_SUBST(LTLIBOBJS)
 
 AC_SUBST(ac_aux_dir)
 

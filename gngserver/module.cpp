@@ -1,4 +1,4 @@
-/* module.c -- dynamic module management: a wrapper for ltdl
+/* module.cpp -- dynamic module management: a wrapper for ltdl
    Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,10 @@
 #  include <config.h>
 #endif
 
-#include "common.h"
-#include "ltdl.h"
-#include "module.h"
-#include "gngserver.h"
+#include "gngserver/common.h"
+#include "gngserver/ltdl.h"
+#include "gngserver/module.h"
+#include "gngserver/gngserver.h"
 
 #ifndef GNGS_MODULE_PATH_ENV
 #  define GNGS_MODULE_PATH_ENV   "GNGS_MODULE_PATH"
@@ -79,28 +79,30 @@ module_init (void)
 
       if (path != NULL)
 	errors = lt_dladdsearchdir(path);
+      
     }
 
     if (errors == 0)
       errors = lt_dladdsearchdir(MODULE_PATH);
 
+    
     if (errors != 0)
       last_error = lt_dlerror ();
 
     ++initialised;
 
-    return errors ? GNGS_ERROR : GNGS_OKAY;
+    return errors ? GNGSERVER_ERROR : GNGSERVER_OKAY;
     }
 
   last_error = multi_init_error;
-  return GNGS_ERROR;
+  return GNGSERVER_ERROR;
 }
 
 int
 module_load (GNGServer *gngserver, const char *name)
 {
   lt_dlhandle module;
-  int status = GNGS_OKAY;
+  int status = GNGSERVER_OKAY;
 
   last_error = NULL;
 
@@ -117,7 +119,7 @@ module_load (GNGServer *gngserver, const char *name)
   if (!last_error)
     last_error = module_not_found_error;
 
-  return GNGS_ERROR;
+  return GNGSERVER_ERROR;
 }
 
 struct unload_data {GNGServer *gngserver; const char *name; };
@@ -135,12 +137,12 @@ module_unload (GNGServer *gngserver, const char *name)
   /* Stopping might be an error, or we may have unloaded the module. */
   if (lt_dlforeach (unload_ltmodule, (lt_ptr_t) &data) != 0)
     if (!last_error)
-      return GNGS_OKAY;
+      return GNGSERVER_OKAY;
 
   if (!last_error)
     last_error = module_not_found_error;
     
-  return GNGS_ERROR;
+  return GNGSERVER_ERROR;
 }
 
 /* This callback returns `0' if the module was not yet found.

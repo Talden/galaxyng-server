@@ -66,7 +66,7 @@ gngserverstate_set (GNGServer *gngserver, const char *key, const void *value,
 		state->key = (const char *) xstrdup (key);
     }
 
-	state->data = value;
+	state->data = (void*)value;
 	state->remove = remove;
 
 	return 0;
@@ -138,7 +138,7 @@ gngserver_result_set (GNGServer *gngserver, const char *value, size_t len)
 {
 	GNGS_ASSERT (gngserver);
 
-	if (len < 0)
+	if (len <= 0)
 		len = strlen (value);
   
 	gngserver_result_clear (gngserver);

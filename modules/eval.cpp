@@ -51,7 +51,7 @@ BUILTIN_DECLARATION (eval)
     status = tokenize (gngserver, &tokens, &command);
 
   if (status == GNGSERVER_INCOMPLETE) {
-    gngserver_result_set (gngserver, "incomplete command", -1);
+    gngserver_result_set (gngserver, "incomplete command", 0);
     status = GNGSERVER_ERROR;
     goto error;
   }

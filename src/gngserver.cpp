@@ -1,5 +1,5 @@
-/* sic.c -- read commands, evaluate them and print the results
-   Copyright (C) 2000 Gary V. Vaughan
+/* gngserver.c -- read commands, evaluate them and print the results
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,75 +22,72 @@
 
 #include <signal.h>
 
-#include "common.h"
-#include "sic_repl.h"
+#include "gngserver/common.h"
+#include "gngserver/module.h"
+#include "gngserver_repl.h"
 
 #ifndef BUFSIZ
 #  define BUFSIZ 256
 #endif
 
-#define SICRCFILE	".sicrc"
+#define GNGSERVERRCFILE	".gngserverrc"
 
-static int evalsicrc (Sic *sic);
+static int evalgngserverrc (GNGServer *gngserver);
 
 int
 main (int argc, char *const argv[], char *const envp[])
 {
   int result = EXIT_SUCCESS;
   FILE *in = stdin;
-  Sic *sic = sic_new ();
+  GNGServer *gngserver = gngserver_new ();
+  Diagnostic *dia = new Diagnostic("GNGServer");
   
-/** @start 1 */
   /* initialise the module subsystem */
-  if (module_init () != SIC_OKAY)
-      sic_fatal ("module initialisation failed");
+  if (module_init () != GNGSERVER_OKAY)
+    dia->Fatal(cerr, "module initialisation failed");
 
-  if (module_load (sic, NULL) != SIC_OKAY)
-      sic_fatal ("sic initialisation failed");
-/** @end 1 */
+  if (module_load (gngserver, NULL) != GNGSERVER_OKAY)
+    dia->Fatal(cerr, "gngserver initialisation failed");
 
   /* initial symbols */
-  sicstate_set (sic, "PS1", "] ", NULL);
-  sicstate_set (sic, "PS2", "- ", NULL);
-  for (; *envp; ++envp)
-    {
-      size_t delim = strcspn (*envp, "=");
-      char *name = XMALLOC (char, 1 + delim);
+  gngserverstate_set (gngserver, "PS1", "] ", NULL);
+  gngserverstate_set (gngserver, "PS2", "- ", NULL);
+  for (; *envp; ++envp) {
+    size_t delim = strcspn (*envp, "=");
+    char *name = XMALLOC (char, 1 + delim);
 
-      strncpy (name, *envp, delim);
-      name[delim] = 0;
+    strncpy (name, *envp, delim);
+    name[delim] = 0;
 
-      sicstate_set (sic, name, *envp + delim +1, NULL);
-    }
-  sicstate_set (sic, "SHELL", argv[0], NULL);
-  sicstate_set (sic, "SIC_VERSION", VERSION, NULL);
+    gngserverstate_set (gngserver, name, *envp + delim +1, NULL);
+  }
+  gngserverstate_set (gngserver, "SHELL", argv[0], NULL);
+  gngserverstate_set (gngserver, "GNGSERVER_VERSION", VERSION, NULL);
   
   /* evaluate the startup file */
-  evalsicrc (sic);
+  evalgngserverrc (gngserver);
   
   /* Interactive implies unbuffered output and ignore interrupts. */
   if (argc > 1 && argv[1][0] != '-')
     in = fopen (argv[1], "rt");
-  else if (isatty(0))
-    {
-      signal (SIGINT, SIG_IGN);
-      setbuf (stdout, NULL);
-      is_interactive = 1;
-    }
+  else if (isatty(0)) {
+    signal (SIGINT, SIG_IGN);
+    setbuf (stdout, NULL);
+    is_interactive = 1;
+  }
 
   /* evaluate the input stream */
-  evalstream (sic, in);
+  evalstream (gngserver, in);
 
   exit (result);
 }
 
-/** @start 2 */
 static int
-evalsicrc (Sic *sic)
+evalgngserverrc (GNGServer *gngserver)
 {
-  int result = SIC_OKAY;
+  int result = GNGSERVER_OKAY;
   char *home = getenv ("HOME");
-  char *sicrcpath, *separator = "";
+  char *gngserverrcpath, *separator = "";
   int len;
 
   if (!home)
@@ -100,14 +97,14 @@ evalsicrc (Sic *sic)
   if (len && home[len -1] != '/')
     separator = "/";
 
-  len += strlen (separator) + strlen (SICRCFILE) + 1;
+  len += strlen (separator) + strlen (GNGSERVERRCFILE) + 1;
 
-  sicrcpath = XMALLOC (char, len);
-  sprintf (sicrcpath, "%s%s%s", home, separator, SICRCFILE);
+  gngserverrcpath = XMALLOC (char, len);
+  sprintf (gngserverrcpath, "%s%s%s", home, separator, GNGSERVERRCFILE);
 
-  if (access (sicrcpath, R_OK) == 0)
-    result = source (sic, sicrcpath);
+  if (access (gngserverrcpath, R_OK) == 0)
+    result = source (gngserver, gngserverrcpath);
 
   return result;
 }
-/** @end 2 */
+

@@ -1,5 +1,5 @@
-/* eval.c -- create and dispatch command vectors
-   Copyright (C) 2000 Gary V. Vaughan
+/* eval.cpp -- create and dispatch command vectors
+   Copyright 2004 Kenneth D. Weinert
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,109 +20,104 @@
 #  include <config.h>
 #endif
 
-#include "common.h"
-#include "builtin.h"
-#include "error.h"
-#include "eval.h"
-#include "sic.h"
-#include "syntax.h"
+#include "gngserver/common.h"
+#include "gngserver/builtin.h"
+#include "gngserver/Diagnostic.h"
+#include "gngserver/eval.h"
+#include "gngserver/gngserver.h"
+#include "gngserver/syntax.h"
 
 static void bufferin_init  (BufferIn *in, char *command);
 static void bufferout_init (BufferOut *out, size_t lim);
 
 int
-eval (Sic *sic, Tokens *tokens)
+eval (GNGServer *gngserver, Tokens *tokens)
 {
   Builtin *builtin;
   
-  SIC_ASSERT (tokens && tokens->argv && tokens->argv[0]);
+  GNGS_ASSERT (tokens && tokens->argv && tokens->argv[0]);
 
-  builtin = builtin_find (sic, tokens->argv[0]);
-
-  if (!builtin)
-    builtin = builtin_find (sic, "unknown");
+  builtin = builtin_find (gngserver, tokens->argv[0]);
 
   if (!builtin)
-    {
-      sic_result_clear (sic);
-      sic_result_append (sic, "command \"", tokens->argv[0],
-			 "\" not found", NULL);
-      return SIC_ERROR;
-    }
+    builtin = builtin_find (gngserver, "unknown");
+
+  if (!builtin) {
+    gngserver_result_clear (gngserver);
+    gngserver_result_append (gngserver, "command \"", tokens->argv[0],
+			     "\" not found", NULL);
+    return GNGSERVER_ERROR;
+  }
 
   /* The table expresses valid counts of arguments, not including
      the command iteslf, hence the `-1'.  */
   if (tokens->argc -1 < builtin->min ||
-      (tokens->argc -1> builtin->max && builtin->max != -1))
-    {
-      sic_result_set (sic, "wrong number of arguments", -1);
-      return SIC_ERROR;
-    }
+      (tokens->argc -1> builtin->max && builtin->max != -1)) {
+    gngserver_result_set (gngserver, "wrong number of arguments", 0);
+    return GNGSERVER_ERROR;
+  }
 
-  return (*builtin->func) (sic, tokens->argc, tokens->argv);
+  return (*builtin->func) (gngserver, tokens->argc, tokens->argv);
 }
 
 int
-untokenize (Sic *sic, char **pcommand, Tokens *tokens)
+untokenize (GNGServer *gngserver, char **pcommand, Tokens *tokens)
 {
   char *command = NULL;
   int i, off;
 
-  SIC_ASSERT (tokens->argc);
+  GNGS_ASSERT (tokens->argc);
 
-  if (tokens->lim < 1)
-    {
-      for (tokens->lim = i = 0; tokens->argv[i]; ++i)
-	tokens->lim += 1 + strlen (tokens->argv[i]);
-    }
+  if (tokens->lim < 1) {
+    for (tokens->lim = i = 0; tokens->argv[i]; ++i)
+      tokens->lim += 1 + strlen (tokens->argv[i]);
+  }
 
-  command = XMALLOC (char, tokens->lim);
+  command = (char*)XMALLOC (char, tokens->lim);
   
-  for (off = i = 0; tokens->argv[i]; ++i)
-    {
-      sprintf (&command[off], "%s ", tokens->argv[i]);
-      off += 1 + strlen (tokens->argv[i]);
-    }
+  for (off = i = 0; tokens->argv[i]; ++i) {
+    sprintf (&command[off], "%s ", tokens->argv[i]);
+    off += 1 + strlen (tokens->argv[i]);
+  }
   command[off -1] = 0;
   
   *pcommand = command;
 
-  return SIC_OKAY;
+  return GNGSERVER_OKAY;
 }
 
 int
-tokenize (Sic *sic, Tokens **ptokens, char **pcommand)
+tokenize (GNGServer *gngserver, Tokens **ptokens, char **pcommand)
 {
   BufferIn in;
   BufferOut out;
   List *head;
-  int status = SIC_CONTINUE;
+  int status = GNGSERVER_CONTINUE;
 
-  SIC_ASSERT (sic->syntax);
+  GNGS_ASSERT (gngserver->syntax);
 
   bufferin_init (&in, *pcommand);
   bufferout_init (&out, in.buf.lim);
 
   /* Perform any user initialisation for syntax readers. */
-  for (head = sic->syntax_init; head; head = head->next)
-    (*(SyntaxInit *) head->userdata) (sic);
+  for (head = gngserver->syntax_init; head; head = head->next)
+    (*(SyntaxInit *) head->userdata) (gngserver);
 
   /* Dispatch to handlers by syntax class of character, or
      simply copy from input to output by default. */
-  while (status == SIC_CONTINUE)
-    {
-      SyntaxHandler *handler = syntax_handler (sic, in.buf.start[in.buf.i]);
+  while (status == GNGSERVER_CONTINUE) {
+    SyntaxHandler *handler = syntax_handler(gngserver, in.buf.start[in.buf.i]);
 
-      if (handler)
-	status = (*handler) (sic, &in, &out);
-      else
-	out.buf.start[out.buf.i++] = in.buf.start[in.buf.i++];
-    }
+    if (handler)
+      status = (*handler) (gngserver, &in, &out);
+    else
+      out.buf.start[out.buf.i++] = in.buf.start[in.buf.i++];
+  }
 
   /* Perform any client finalisation for syntax reader. */
-  for (head = sic->syntax_finish; head; head = head->next)
-    (*(SyntaxFinish *) head->userdata) (sic, &in, &out);
-	
+  for (head = gngserver->syntax_finish; head; head = head->next)
+    (*(SyntaxFinish *) head->userdata) (gngserver, &in, &out);
+
   {
     /* Can't fill ARGV on the fly incase BUF moved during realloc. */
     Tokens *tokens = XMALLOC (Tokens, 1);
@@ -149,7 +144,7 @@ tokenize (Sic *sic, Tokens **ptokens, char **pcommand)
 static void
 bufferin_init (BufferIn *in, char *command)
 {
-  SIC_ASSERT (in && command);
+  GNGS_ASSERT (in && command);
   
   in->buf.lim	= 1 + strlen (command);
   in->buf.start	= command;
@@ -161,7 +156,7 @@ bufferin_init (BufferIn *in, char *command)
 static void
 bufferout_init (BufferOut *out, size_t lim)
 {
-  SIC_ASSERT (out);
+  GNGS_ASSERT (out);
   
   out->buf.lim	= lim;
   out->buf.start= XMALLOC (char, lim);

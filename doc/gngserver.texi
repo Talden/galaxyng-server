@@ -111,7 +111,7 @@ routes :), and in general make the code easier to extend for other
 future enhancements.
 
 @page
-@node Index
+@node Index, (dir), (dir), (dir)
 @unnumbered Index
 
 @printindex cp

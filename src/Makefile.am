@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## Copyright (C) 2000 Gary V. Vaughan
+## Copyright 2004 Kenneth D. Weinert
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	= -I$(top_builddir) -I$(top_builddir)/sic \
-		-I$(top_srcdir) -I$(top_srcdir)/sic
+INCLUDES	= -I$(top_builddir) -I$(top_builddir)/gngserver \
+		-I$(top_srcdir) -I$(top_srcdir)/gngserver
 
 if WITH_READLINE
 LIBADD_READLINE = -lreadline
@@ -26,12 +26,12 @@ else
 LIBADD_READLINE =
 endif
 
-noinst_HEADERS	= sic_repl.h
+noinst_HEADERS	= gngserver_repl.h
 
-bin_PROGRAMS	= sic
-sic_LDADD	= $(top_builddir)/sic/libsic.la $(LIBADD_READLINE) @LIBADD_DL@
-sic_SOURCES	= sic.c sic_builtin.c sic_repl.c sic_syntax.c
-sic_LDFLAGS	= -no-undefined -dlpreopen force -dlopen self  \
+bin_PROGRAMS	= gngserver
+gngserver_LDADD	= $(top_builddir)/gngserver/libgngserver.la $(LIBADD_READLINE) @LIBADD_DL@
+gngserver_SOURCES	= gngserver.cpp gngserver_builtin.cpp gngserver_repl.cpp gngserver_syntax.cpp
+gngserver_LDFLAGS	= -no-undefined -dlpreopen force -dlopen self  \
 		-dlopen ${top_builddir}/modules/cd.la \
 		-dlopen ${top_builddir}/modules/dollar.la \
 		-dlopen ${top_builddir}/modules/eval.la \

@@ -1734,46 +1734,45 @@ lt_dlerror LTDL_PARAMS((void))
 }
 
 int
-lt_dladdsearchdir (search_dir)
-	const char *search_dir;
+lt_dladdsearchdir(const char *search_dir)
 {
-	if (!search_dir || !strlen(search_dir))
-		return 0;
-	if (!user_search_path) {
-		user_search_path = strdup(search_dir);
-		if (!user_search_path) {
-			last_error = LT_DLSTRERROR(NO_MEMORY);
-			return 1;
-		}
-	} else {
-		char	*new_search_path = (char*)
-			lt_dlmalloc(strlen(user_search_path) + 
-				strlen(search_dir) + 2); /* ':' + '\0' == 2 */
-		if (!new_search_path) {
-			last_error = LT_DLSTRERROR(NO_MEMORY);
-			return 1;
-		}
-		sprintf (new_search_path, "%s%c%s", user_search_path,
-			 LTDL_PATHSEP_CHAR, search_dir);
-		lt_dlfree(user_search_path);
-		user_search_path = new_search_path;
-	}
-	return 0;
+  if (!search_dir || !strlen(search_dir))
+    return 0;
+  if (!user_search_path) {
+    user_search_path = strdup(search_dir);
+    if (!user_search_path) {
+      last_error = LT_DLSTRERROR(NO_MEMORY);
+      return 1;
+    }
+  }
+  else {
+    /* ':' + '\0' == 2 */
+    char *new_search_path = (char*)lt_dlmalloc(strlen(user_search_path) +
+					       strlen(search_dir) + 2);
+    if (!new_search_path) {
+      last_error = LT_DLSTRERROR(NO_MEMORY);
+      return 1;
+    }
+    sprintf (new_search_path, "%s%c%s", user_search_path,
+	     LTDL_PATHSEP_CHAR, search_dir);
+    lt_dlfree(user_search_path);
+    user_search_path = new_search_path;
+  }
+  return 0;
 }
 
 int
-lt_dlsetsearchpath (search_path)
-	const char *search_path;
+lt_dlsetsearchpath(const char *search_path)
 {
-	if (user_search_path)
-		lt_dlfree(user_search_path);
-	user_search_path = 0; /* reset the search path */
-	if (!search_path || !strlen(search_path))
-		return 0;
-	user_search_path = strdup(search_path);
-	if (!user_search_path)
-		return 1;
-	return 0;
+  if (user_search_path)
+    lt_dlfree(user_search_path);
+  user_search_path = 0; /* reset the search path */
+  if (!search_path || !strlen(search_path))
+    return 0;
+  user_search_path = strdup(search_path);
+  if (!user_search_path)
+    return 1;
+  return 0;
 }
 
 const char *

@@ -20,75 +20,75 @@
 #  include <config.h>
 #endif
 
-#include "common.h"
-#include "builtin.h"
-#include "eval.h"
+#include "gngserver/common.h"
+#include "gngserver/builtin.h"
+#include "gngserver/eval.h"
 
 struct builtintab {
-	struct builtintab *next;
-	Builtin *table;
+  struct builtintab *next;
+  Builtin *table;
 };
 
 int
 builtin_install (GNGServer *gngserver, Builtin *table)
 {
-	int status = GNGSERVER_ERROR;
+  int status = GNGSERVER_ERROR;
   
-	if (table) {
-		BuiltinTab *memory = XMALLOC (BuiltinTab, 1);
-		memory->next = gngserver->builtins;
-		memory->table = table;
-		gngserver->builtins = memory;
-		status = GNGSERVER_OKAY;
-    }
+  if (table) {
+    BuiltinTab *memory = XMALLOC (BuiltinTab, 1);
+    memory->next = gngserver->builtins;
+    memory->table = table;
+    gngserver->builtins = memory;
+    status = GNGSERVER_OKAY;
+  }
 
-	return status;
+  return status;
 }
 
 int
 builtin_remove (GNGServer *gngserver, Builtin *table)
 {
-	int status = GNGSERVER_ERROR;
+  int status = GNGSERVER_ERROR;
   
-	if (gngserver->builtins && table) {
-		BuiltinTab *stale = NULL;
-
-		if (gngserver->builtins->table == table) {
-			stale = gngserver->builtins;
-			gngserver->builtins = gngserver->builtins->next;
-			status = GNGSERVER_OKAY;
-		}
-		else {
-			BuiltinTab *p;
-	  
-			for (p = gngserver->builtins; p->next; p = p->next)
-				if (p->next->table == table) {
-					stale = p->next;
-					p->next = p->next->next;
-					status = GNGSERVER_OKAY;
-					break;
-				}
-		}
-
-		XFREE (stale);
+  if (gngserver->builtins && table) {
+    BuiltinTab *stale = NULL;
+    
+    if (gngserver->builtins->table == table) {
+      stale = gngserver->builtins;
+      gngserver->builtins = gngserver->builtins->next;
+      status = GNGSERVER_OKAY;
     }
+    else {
+      BuiltinTab *p;
+      
+      for (p = gngserver->builtins; p->next; p = p->next)
+	if (p->next->table == table) {
+	  stale = p->next;
+	  p->next = p->next->next;
+	  status = GNGSERVER_OKAY;
+	  break;
+	}
+    }
+    
+    XFREE (stale);
+  }
   
-	return status;
+  return status;
 }
 
 Builtin *
 builtin_find (GNGServer *gngserver, const char *name)
 {
-	if (gngserver->builtins) {
-		BuiltinTab *p;
-		for (p = gngserver->builtins; p; p = p->next) {
-			int i;
-			for (i = 0; p->table[i].name; ++i) {
-				if (strcmp (p->table[i].name, name) == 0)
-					return &p->table[i];
-			}
-		}
+  if (gngserver->builtins) {
+    BuiltinTab *p;
+    for (p = gngserver->builtins; p; p = p->next) {
+      int i;
+      for (i = 0; p->table[i].name; ++i) {
+	if (strcmp (p->table[i].name, name) == 0)
+	  return &p->table[i];
+      }
     }
-
-	return NULL;
+  }
+  
+  return NULL;
 }
