@@ -35,61 +35,62 @@ Diagnostic::~Diagnostic()
 
 ostream&
 Diagnostic::output_message(ostream& os, const char *mode,
-						   const char *message, va_list ap)
+			   const char *message, va_list ap)
 {
-	os << m_programName << ": " << mode << ": ";
-	const char *p = message;
-	int num;
-	double d;
+  os << m_programName << ": " << mode << ": ";
+  const char *p = message;
+  int num;
+  double d;
 
-	while (*p) {
-		switch (*p) {
-			case '%':
-				p++;
-				switch (*p) {
-					case 'd':
-						num = va_arg(ap, int);
-						os << num;
-						break;
-						
-					case 'f':
-						d = va_arg(ap, double);
-						os << d;
-						break;
-						
-					default:
-						os << "(unknown formatter '" << *p << "')";
-						break;
-				}
-				break;
-
-			case '\\':
-				p++;
-				switch(*p) {
-					case '\\':
-						os << "\\";
-						break;
-						
-					case 't':
-						os << "\t";
-						break;
-
-					case 'n':
-						os << "\n";
-						break;
-
-					default:
-						os << "(unknown escape: '" << *p << "')";
-						break;
-				}
-				break;
-				
-			default:
-				os << *p;
-		}
-	}
+  while (*p) {
+    switch (*p) {
+    case '%':
+      p++;
+      switch (*p) {
+      case 'd':
+	num = va_arg(ap, int);
+	os << num;
+	break;
 	
-	return os;
+      case 'f':
+	d = va_arg(ap, double);
+	os << d;
+	break;
+	
+      default:
+	os << "(unknown formatter '" << *p << "')";
+	break;
+      }
+      break;
+      
+    case '\\':
+      p++;
+      switch(*p) {
+      case '\\':
+	os << "\\";
+	break;
+	
+      case 't':
+	os << "\t";
+	break;
+	
+      case 'n':
+	os << "\n";
+	break;
+	
+      default:
+	os << "(unknown escape: '" << *p << "')";
+	break;
+      }
+      break;
+      
+    default:
+      os << *p;
+    }
+    p++;
+  }
+  
+  return os;
 }
 
 ostream&

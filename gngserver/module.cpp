@@ -76,7 +76,7 @@ module_init (void)
     /* Set up the module search directories. */
     if (errors == 0) {
       const char *path = getenv (GNGS_MODULE_PATH_ENV);
-
+      cerr << "module search path: \"" << path << "\"" << endl;
       if (path != NULL)
 	errors = lt_dladdsearchdir(path);
       
@@ -102,17 +102,64 @@ int
 module_load (GNGServer *gngserver, const char *name)
 {
   lt_dlhandle module;
+  Builtin *builtin_table;
+  Syntax  *syntax_table;
+
   int status = GNGSERVER_OKAY;
 
+  cerr << "looking for module \"";
+
+  if (name)
+    cerr << name;
+  else
+    cerr << "(NULL)";
+
+  cerr << "\"" << endl;
+  
   last_error = NULL;
 
   module = lt_dlopenext (name);
+
+  if (module) {
+    builtin_table = (Builtin *) lt_dlsym(module, "builtin_table");
+    syntax_table = (Syntax *)lt_dlsym(module, "syntax_table");
+
+    if (!builtin_table && !syntax_table) {
+      lt_dlclose(module);
+      last_error = no_builtin_table_error;
+      module = NULL;
+    }
+  }
 
   if (module) {
     ModuleInit *init_func
       = (ModuleInit *) lt_dlsym (module, "module_init");
     if (init_func)
       (*init_func) (gngserver);
+  }
+
+  if (module) {
+    SyntaxFinish *syntax_finish
+      = (SyntaxFinish *) lt_dlsym (module, "syntax_finish");
+    SyntaxInit *syntax_init
+      = (SyntaxInit *) lt_dlsym (module, "syntax_init");
+
+    if (syntax_finish)
+      gngserver->syntax_finish = list_cons (list_new ((void*)syntax_finish),
+					    gngserver->syntax_finish);
+    if (syntax_init)
+      gngserver->syntax_init = list_cons (list_new ((void*)syntax_init),
+					  gngserver->syntax_init);
+  }
+
+  if (module) {
+    if (builtin_table)
+      status = builtin_install (gngserver, builtin_table);
+
+    if (syntax_table && status == GNGSERVER_OKAY)
+      status = syntax_install (gngserver, module, syntax_table);
+
+    return status;
   }
 
   last_error = lt_dlerror();

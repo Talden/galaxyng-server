@@ -44,10 +44,10 @@ main (int argc, char *const argv[], char *const envp[])
   
   /* initialise the module subsystem */
   if (module_init () != GNGSERVER_OKAY)
-    dia->Fatal(cerr, "module initialisation failed");
+    dia->Fatal(std::cerr, "module initialization failed\n");
 
   if (module_load (gngserver, NULL) != GNGSERVER_OKAY)
-    dia->Fatal(cerr, "gngserver initialisation failed");
+    dia->Fatal(std::cerr, "gngserver initialization failed\n");
 
   /* initial symbols */
   gngserverstate_set (gngserver, "PS1", "] ", NULL);
