@@ -1,5 +1,5 @@
-/* strspn.cpp -- implement strspn() for those architectures without it
-   Copyright 2004 Kenneth D. Weinert
+/* strspn.c -- implement strspn() for those architectures without it
+   Copyright (C) 2000 Gary V. Vaughan
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,11 +33,12 @@ extern char *strchr ();
 size_t
 strspn (const *string, const *accept)
 {
-	size_t count = 0;
-	while (strchr (accept, *string)) {
-		++count, ++string;
+  size_t count = 0;
+  while (strchr (accept, *string))
+    {
+      ++count, ++string;
     }
 
-	return count;
+  return count;
 }
 

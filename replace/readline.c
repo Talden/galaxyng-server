@@ -1,5 +1,5 @@
-/* readline.cpp -- implement readline() for architectures without it.
-   Copyright 2004 Kenneth D. Weinert
+/* readline.c -- implement readline() for architectures without it.
+   Copyright (C) 2000 Gary V. Vaughan
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,37 +33,40 @@
 char *
 readline (char *prompt)
 {
-	int lim = BUFSIZ;
-	int i = 0;
-	int isdone = 0;
-	char *buf;
-	
-	printf (prompt);
-	
-	buf = (char *) malloc (lim);
-	
-	while (!isdone) {
-		int c = getc (stdin);
+  int lim = BUFSIZ;
+  int i = 0;
+  int isdone = 0;
+  char *buf;
+  
+  printf (prompt);
 
-		switch (c) {
-			case EOF:
-				isdone = 1;
-				break;
+  buf = (char *) malloc (lim);
+      
+  while (!isdone)
+    {
+      int c = getc (stdin);
 
-			case '\n':
-				isdone = 1;
-				break;
+      switch (c)
+	{
+	case EOF:
+	  isdone = 1;
+	  break;
+
+	case '\n':
+	  isdone = 1;
+	  break;
 	  
-			default:
-				if (i == lim) {
-					lim *= 2;
-					buf = (char *) realloc (buf, lim);
-				}
-				buf[i++] = (char) c;
-				break;
-		}
+	default:
+	  if (i == lim)
+	    {
+	      lim *= 2;
+	      buf = (char *) realloc (buf, lim);
+	    }
+	  buf[i++] = (char) c;
+	  break;
+	}
     }
-	buf[i] = 0;
+  buf[i] = 0;
 
-	return *buf ? buf : NULL;
+  return *buf ? buf : NULL;
 }

@@ -1,5 +1,5 @@
 # configure.in -- Process this file with autoconf to produce configure
-# Copyright 2004 Kenneth D. Weinert
+# Copyright 2005 Kenneth D. Weinert
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-AC_INIT(gngserver/Diagnostic.cpp)
+AC_INIT(src/Plugin.cpp)
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h:config-h.in)
-AM_INIT_AUTOMAKE(gngserver, 0.1.0)
-AM_PATH_CPPUNIT(1.9.6)
+AM_INIT_AUTOMAKE(gngserver, 7.0.0)
 
-AC_PROG_CXX
-AC_LANG_CPLUSPLUS
+AC_PROG_CC
 AC_LIBTOOL_DLOPEN
-AC_PROG_INSTALL
 AM_PROG_LIBTOOL
 
 AC_HEADER_STDC
@@ -66,10 +63,10 @@ AC_TYPE_SIZE_T
 
 AC_LIB_LTDL
 AM_WITH_DMALLOC
-GNGS_WITH_READLINE
+SIC_WITH_READLINE
 
-GNGS_VAR_SYS_ERRLIST
-GNGS_VAR_SYS_SIGLIST
+SIC_VAR_SYS_ERRLIST
+SIC_VAR_SYS_SIGLIST
 
 AC_CHECK_FUNCS(bzero memset, break)
 AC_CHECK_FUNCS(calloc strchr strrchr)
@@ -89,11 +86,11 @@ AC_OUTPUT_COMMANDS([
   if test -n "$CONFIG_FILES" && test -n "$CONFIG_HEADERS"; then
     # If both these vars are non-empty, then config.status wasn't run by
     # automake rules (which always set one or the other to empty).
-    CONFIG_OTHER=${CONFIG_OTHER-gngserver/common.h}
+    CONFIG_OTHER=${CONFIG_OTHER-gngserver/Plugin.h}
   fi
   case "$CONFIG_OTHER" in
-  *gngserver/common.h*)
-    outfile=gngserver/common.h
+  *gngserver/Plugin.h*)
+    outfile=gngserver/Plugin.h
     stampfile=gngserver/stamp-common
     tmpfile=${outfile}T
     dirname="sed s,^.*/,,g"
@@ -108,8 +105,8 @@ AC_OUTPUT_COMMANDS([
  * --------------------------------------------------------------------
  */
 
-#ifndef GNGS_COMMON_H
-#define GNGS_COMMON_H 1
+#ifndef SIC_COMMON_H
+#define SIC_COMMON_H 1
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -144,11 +141,11 @@ _EOF_
       cat >> $tmpfile << '_EOF_'
 
 #include <assert.h>
-#define GNGS_ASSERT assert
+#define SIC_ASSERT assert
 
 _EOF_
     else
-	echo '#define GNGS_ASSERT(expr)	((void) 0)' >> $tmpfile
+	echo '#define GNGSERVER_ASSERT(expr)	((void) 0)' >> $tmpfile
     fi
 
     # Make a choice between the two different API's for variadic
@@ -187,43 +184,45 @@ _EOF_
     fi
 
     # The ugly but portable cpp stuff comes from here
-    infile=$srcdir/gngserver/`echo $outfile | sed 's,.*/,,g;s,\..*$,,g'`-h.in
+    infile=$srcdir/sic/`echo $outfile | sed 's,.*/,,g;s,\..*$,,g'`-h.in
     sed '/^##.*$/d' $infile >> $tmpfile 
 
     ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
     if test x$ac_cv_func_basename = xno; then
-      echo 'extern char *basename (const char *path);' >> ${tmpfile}2
+      echo 'extern char *basename PARAMS((const char *path));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strcspn = xno; then
-      echo 'extern size_t strcspn (const char *string, const char *accept);' >> ${tmpfile}2
+      echo 'extern size_t strcspn PARAMS((const char *string, const char *accept));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strerror = xno; then
-      echo 'extern char *strerror (int err);' >> ${tmpfile}2
+      echo 'extern char *strerror PARAMS((int err));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strsignal = xno; then
-      echo 'extern char *strsignal (int signo);' >> ${tmpfile}2
+      echo 'extern char *strsignal PARAMS((int signo));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_strspn = xno; then
-      echo 'extern size_t strspn (const char *string, const char *reject);' >> ${tmpfile}2
+      echo 'extern size_t strspn PARAMS((const char *string, const char *reject));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_vfprintf = xno; then
-      echo 'extern int vfprintf (FILE *file, const char *format, va_list ap);' >> ${tmpfile}2
+      echo 'extern int vfprintf PARAMS((FILE *file, const char *format, va_list ap));' >> ${tmpfile}2
     fi
     if test x$ac_cv_func_waitpid = xno; then
-      echo 'extern pid_t waitpid (pid_t pid, int *pstatus, int options);' >> ${tmpfile}2
+      echo 'extern pid_t waitpid PARAMS((pid_t pid, int *pstatus, int options));' >> ${tmpfile}2
     fi
 
     if test -f ${tmpfile}2; then
       cat >> $tmpfile << '_EOF_'
 
+BEGIN_C_DECLS
 _EOF_
       cat ${tmpfile}2 >> $tmpfile
+      echo 'END_C_DECLS' >> $tmpfile
       ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
     fi
 
     cat >> $tmpfile << '_EOF_'
 
-#endif /* !GNGS_COMMON_H */
+#endif /* !GNGSERVER_COMMON_H */
 _EOF_
 
     if cmp -s $tmpfile $outfile; then
@@ -259,6 +258,9 @@ _EOF_
   ac_cv_header_unistd_h=$ac_cv_header_unistd_h
   ac_cv_header_varargs_h=$ac_cv_header_varargs_h
 ])
+
+LTLIBOBJS=`echo "$LIBOBJS"|sed 's,\.o ,.lo ,g;s,\.o$,.lo,'`
+AC_SUBST(LTLIBOBJS)
 
 AC_SUBST(ac_aux_dir)
 

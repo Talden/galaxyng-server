@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## Copyright 2004 Kenneth D. Weinert
+## Copyright 2005 Kenneth D. Weinert
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,23 +17,9 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	= -I$(top_builddir) -I$(top_builddir)/gngserver \
+INCLUDES	  = -I$(top_builddir) -I$(top_builddir)/gngserver \
 		-I$(top_srcdir) -I$(top_srcdir)/gngserver
 
-if WITH_READLINE
-LIBADD_READLINE = -lreadline
-else
-LIBADD_READLINE =
-endif
+noinst_HEADERS	  = 
 
-noinst_HEADERS	= gngserver_repl.h
-
-bin_PROGRAMS	= gngserver
-gngserver_LDADD	= $(top_builddir)/gngserver/libgngserver.la $(LIBADD_READLINE) @LIBADD_DL@
-gngserver_SOURCES	= gngserver.cpp gngserver_builtin.cpp gngserver_repl.cpp gngserver_syntax.cpp
-gngserver_LDFLAGS	= -no-undefined -dlpreopen force -dlopen self  \
-		-dlopen ${top_builddir}/modules/cd.la \
-		-dlopen ${top_builddir}/modules/dollar.la \
-		-dlopen ${top_builddir}/modules/eval.la \
-		-dlopen ${top_builddir}/modules/sqrt.la \
-		-dlopen ${top_builddir}/modules/unknown.la
+bin_PROGRAMS	  = gngserver

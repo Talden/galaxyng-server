@@ -1,4 +1,4 @@
-/* strsignal.cpp -- implement strsignal() for architectures without it
+/* strsignal.c -- implement strsignal() for architectures without it
    Written by Fred Fish.  fnf@cygnus.com
    This file is in the public domain.
 */
@@ -60,10 +60,10 @@ extern char *memset ();
 
 struct signal_info
 {
-	int value;		/* The numeric value from <signal.h> */
-	const char *name;	/* The equivalent symbolic value */
+  int value;		/* The numeric value from <signal.h> */
+  const char *name;	/* The equivalent symbolic value */
 #ifndef HAVE_SYS_SIGLIST
-	const char *msg;	/* Short message about this value */
+  const char *msg;	/* Short message about this value */
 #endif
 };
 
@@ -76,148 +76,148 @@ struct signal_info
 static const struct signal_info signal_table[] =
 {
 #if defined (SIGHUP)
-	ENTRY(SIGHUP, "SIGHUP", "Hangup"),
+  ENTRY(SIGHUP, "SIGHUP", "Hangup"),
 #endif
 #if defined (SIGINT)
-	ENTRY(SIGINT, "SIGINT", "Interrupt"),
+  ENTRY(SIGINT, "SIGINT", "Interrupt"),
 #endif
 #if defined (SIGQUIT)
-	ENTRY(SIGQUIT, "SIGQUIT", "Quit"),
+  ENTRY(SIGQUIT, "SIGQUIT", "Quit"),
 #endif
 #if defined (SIGILL)
-	ENTRY(SIGILL, "SIGILL", "Illegal instruction"),
+  ENTRY(SIGILL, "SIGILL", "Illegal instruction"),
 #endif
 #if defined (SIGTRAP)
-	ENTRY(SIGTRAP, "SIGTRAP", "Trace/breakpoint trap"),
+  ENTRY(SIGTRAP, "SIGTRAP", "Trace/breakpoint trap"),
 #endif
 /* Put SIGIOT before SIGABRT, so that if SIGIOT==SIGABRT then SIGABRT
    overrides SIGIOT.  SIGABRT is in ANSI and POSIX.1, and SIGIOT isn't. */
 #if defined (SIGIOT)
-	ENTRY(SIGIOT, "SIGIOT", "IOT trap"),
+  ENTRY(SIGIOT, "SIGIOT", "IOT trap"),
 #endif
 #if defined (SIGABRT)
-	ENTRY(SIGABRT, "SIGABRT", "Aborted"),
+  ENTRY(SIGABRT, "SIGABRT", "Aborted"),
 #endif
 #if defined (SIGEMT)
-	ENTRY(SIGEMT, "SIGEMT", "Emulation trap"),
+  ENTRY(SIGEMT, "SIGEMT", "Emulation trap"),
 #endif
 #if defined (SIGFPE)
-	ENTRY(SIGFPE, "SIGFPE", "Arithmetic exception"),
+  ENTRY(SIGFPE, "SIGFPE", "Arithmetic exception"),
 #endif
 #if defined (SIGKILL)
-	ENTRY(SIGKILL, "SIGKILL", "Killed"),
+  ENTRY(SIGKILL, "SIGKILL", "Killed"),
 #endif
 #if defined (SIGBUS)
-	ENTRY(SIGBUS, "SIGBUS", "Bus error"),
+  ENTRY(SIGBUS, "SIGBUS", "Bus error"),
 #endif
 #if defined (SIGSEGV)
-	ENTRY(SIGSEGV, "SIGSEGV", "Segmentation fault"),
+  ENTRY(SIGSEGV, "SIGSEGV", "Segmentation fault"),
 #endif
 #if defined (SIGSYS)
-	ENTRY(SIGSYS, "SIGSYS", "Bad system call"),
+  ENTRY(SIGSYS, "SIGSYS", "Bad system call"),
 #endif
 #if defined (SIGPIPE)
-	ENTRY(SIGPIPE, "SIGPIPE", "Broken pipe"),
+  ENTRY(SIGPIPE, "SIGPIPE", "Broken pipe"),
 #endif
 #if defined (SIGALRM)
-	ENTRY(SIGALRM, "SIGALRM", "Alarm clock"),
+  ENTRY(SIGALRM, "SIGALRM", "Alarm clock"),
 #endif
 #if defined (SIGTERM)
-	ENTRY(SIGTERM, "SIGTERM", "Terminated"),
+  ENTRY(SIGTERM, "SIGTERM", "Terminated"),
 #endif
 #if defined (SIGUSR1)
-	ENTRY(SIGUSR1, "SIGUSR1", "User defined signal 1"),
+  ENTRY(SIGUSR1, "SIGUSR1", "User defined signal 1"),
 #endif
 #if defined (SIGUSR2)
-	ENTRY(SIGUSR2, "SIGUSR2", "User defined signal 2"),
+  ENTRY(SIGUSR2, "SIGUSR2", "User defined signal 2"),
 #endif
 /* Put SIGCLD before SIGCHLD, so that if SIGCLD==SIGCHLD then SIGCHLD
    overrides SIGCLD.  SIGCHLD is in POXIX.1 */
 #if defined (SIGCLD)
-	ENTRY(SIGCLD, "SIGCLD", "Child status changed"),
+  ENTRY(SIGCLD, "SIGCLD", "Child status changed"),
 #endif
 #if defined (SIGCHLD)
-	ENTRY(SIGCHLD, "SIGCHLD", "Child status changed"),
+  ENTRY(SIGCHLD, "SIGCHLD", "Child status changed"),
 #endif
 #if defined (SIGPWR)
-	ENTRY(SIGPWR, "SIGPWR", "Power fail/restart"),
+  ENTRY(SIGPWR, "SIGPWR", "Power fail/restart"),
 #endif
 #if defined (SIGWINCH)
-	ENTRY(SIGWINCH, "SIGWINCH", "Window size changed"),
+  ENTRY(SIGWINCH, "SIGWINCH", "Window size changed"),
 #endif
 #if defined (SIGURG)
-	ENTRY(SIGURG, "SIGURG", "Urgent I/O condition"),
+  ENTRY(SIGURG, "SIGURG", "Urgent I/O condition"),
 #endif
 #if defined (SIGIO)
   /* "I/O pending" has also been suggested, but is misleading since the
      signal only happens when the process has asked for it, not everytime
      I/O is pending. */
-	ENTRY(SIGIO, "SIGIO", "I/O possible"),
+  ENTRY(SIGIO, "SIGIO", "I/O possible"),
 #endif
 #if defined (SIGPOLL)
-	ENTRY(SIGPOLL, "SIGPOLL", "Pollable event occurred"),
+  ENTRY(SIGPOLL, "SIGPOLL", "Pollable event occurred"),
 #endif
 #if defined (SIGSTOP)
-	ENTRY(SIGSTOP, "SIGSTOP", "Stopped (signal)"),
+  ENTRY(SIGSTOP, "SIGSTOP", "Stopped (signal)"),
 #endif
 #if defined (SIGTSTP)
-	ENTRY(SIGTSTP, "SIGTSTP", "Stopped (user)"),
+  ENTRY(SIGTSTP, "SIGTSTP", "Stopped (user)"),
 #endif
 #if defined (SIGCONT)
-	ENTRY(SIGCONT, "SIGCONT", "Continued"),
+  ENTRY(SIGCONT, "SIGCONT", "Continued"),
 #endif
 #if defined (SIGTTIN)
-	ENTRY(SIGTTIN, "SIGTTIN", "Stopped (tty input)"),
+  ENTRY(SIGTTIN, "SIGTTIN", "Stopped (tty input)"),
 #endif
 #if defined (SIGTTOU)
-	ENTRY(SIGTTOU, "SIGTTOU", "Stopped (tty output)"),
+  ENTRY(SIGTTOU, "SIGTTOU", "Stopped (tty output)"),
 #endif
 #if defined (SIGVTALRM)
-	ENTRY(SIGVTALRM, "SIGVTALRM", "Virtual timer expired"),
+  ENTRY(SIGVTALRM, "SIGVTALRM", "Virtual timer expired"),
 #endif
 #if defined (SIGPROF)
-	ENTRY(SIGPROF, "SIGPROF", "Profiling timer expired"),
+  ENTRY(SIGPROF, "SIGPROF", "Profiling timer expired"),
 #endif
 #if defined (SIGXCPU)
-	ENTRY(SIGXCPU, "SIGXCPU", "CPU time limit exceeded"),
+  ENTRY(SIGXCPU, "SIGXCPU", "CPU time limit exceeded"),
 #endif
 #if defined (SIGXFSZ)
-	ENTRY(SIGXFSZ, "SIGXFSZ", "File size limit exceeded"),
+  ENTRY(SIGXFSZ, "SIGXFSZ", "File size limit exceeded"),
 #endif
 #if defined (SIGWIND)
-	ENTRY(SIGWIND, "SIGWIND", "SIGWIND"),
+  ENTRY(SIGWIND, "SIGWIND", "SIGWIND"),
 #endif
 #if defined (SIGPHONE)
-	ENTRY(SIGPHONE, "SIGPHONE", "SIGPHONE"),
+  ENTRY(SIGPHONE, "SIGPHONE", "SIGPHONE"),
 #endif
 #if defined (SIGLOST)
-	ENTRY(SIGLOST, "SIGLOST", "Resource lost"),
+  ENTRY(SIGLOST, "SIGLOST", "Resource lost"),
 #endif
 #if defined (SIGWAITING)
-	ENTRY(SIGWAITING, "SIGWAITING", "Process's LWPs are blocked"),
+  ENTRY(SIGWAITING, "SIGWAITING", "Process's LWPs are blocked"),
 #endif
 #if defined (SIGLWP)
-	ENTRY(SIGLWP, "SIGLWP", "Signal LWP"),
+  ENTRY(SIGLWP, "SIGLWP", "Signal LWP"),
 #endif
 #if defined (SIGDANGER)
-	ENTRY(SIGDANGER, "SIGDANGER", "Swap space dangerously low"),
+  ENTRY(SIGDANGER, "SIGDANGER", "Swap space dangerously low"),
 #endif
 #if defined (SIGGRANT)
-	ENTRY(SIGGRANT, "SIGGRANT", "Monitor mode granted"),
+  ENTRY(SIGGRANT, "SIGGRANT", "Monitor mode granted"),
 #endif
 #if defined (SIGRETRACT)
-	ENTRY(SIGRETRACT, "SIGRETRACT", "Need to relinguish monitor mode"),
+  ENTRY(SIGRETRACT, "SIGRETRACT", "Need to relinguish monitor mode"),
 #endif
 #if defined (SIGMSG)
-	ENTRY(SIGMSG, "SIGMSG", "Monitor mode data available"),
+  ENTRY(SIGMSG, "SIGMSG", "Monitor mode data available"),
 #endif
 #if defined (SIGSOUND)
-	ENTRY(SIGSOUND, "SIGSOUND", "Sound completed"),
+  ENTRY(SIGSOUND, "SIGSOUND", "Sound completed"),
 #endif
 #if defined (SIGSAK)
-	ENTRY(SIGSAK, "SIGSAK", "Secure attention"),
+  ENTRY(SIGSAK, "SIGSAK", "Secure attention"),
 #endif
-	ENTRY(0, NULL, NULL)
+  ENTRY(0, NULL, NULL)
 };
 
 /* Translation table allocated and initialized at runtime.  Indexed by the
@@ -285,32 +285,38 @@ BUGS
 static void
 init_signal_tables ()
 {
-	const struct signal_info *eip;
-	int nbytes;
+  const struct signal_info *eip;
+  int nbytes;
 
-	/* If we haven't already scanned the signal_table once to find the maximum
-	   signal value, then go find it now. */
+  /* If we haven't already scanned the signal_table once to find the maximum
+     signal value, then go find it now. */
 
-	if (num_signal_names == 0) {
-		for (eip = signal_table; eip -> name != NULL; eip++) {
-			if (eip -> value >= num_signal_names) {
-				num_signal_names = eip -> value + 1;
-			}
-		}
+  if (num_signal_names == 0)
+    {
+      for (eip = signal_table; eip -> name != NULL; eip++)
+	{
+	  if (eip -> value >= num_signal_names)
+	    {
+	      num_signal_names = eip -> value + 1;
+	    }
+	}
     }
 
-	/* Now attempt to allocate the sys_siglist table, zero it out, and then
-	   initialize it from the statically initialized signal_table. */
+  /* Now attempt to allocate the sys_siglist table, zero it out, and then
+     initialize it from the statically initialized signal_table. */
 
-	if (sys_siglist == NULL) {
-		nbytes = num_signal_names * sizeof (char *);
-		if ((sys_siglist = (const char **) malloc (nbytes)) != NULL) {
-			memset (sys_siglist, 0, nbytes);
-			sys_nsig = num_signal_names;
-			for (eip = signal_table; eip -> name != NULL; eip++) {
-				sys_siglist[eip -> value] = eip -> msg;
-			}
-		}
+  if (sys_siglist == NULL)
+    {
+      nbytes = num_signal_names * sizeof (char *);
+      if ((sys_siglist = (const char **) malloc (nbytes)) != NULL)
+	{
+	  memset (sys_siglist, 0, nbytes);
+	  sys_nsig = num_signal_names;
+	  for (eip = signal_table; eip -> name != NULL; eip++)
+	    {
+	      sys_siglist[eip -> value] = eip -> msg;
+	    }
+	}
     }
 }
 #endif
@@ -349,31 +355,35 @@ DESCRIPTION
 const char *
 strsignal (int signo)
 {
-	const char *msg;
-	static char buf[32];
+  const char *msg;
+  static char buf[32];
 
 #ifndef HAVE_SYS_SIGLIST
 
-	if (signal_names == NULL) {
-		init_signal_tables ();
+  if (signal_names == NULL)
+    {
+      init_signal_tables ();
     }
 
 #endif
 
-	if ((signo < 0) || (signo >= sys_nsig)) {
-		/* Out of range, just return NULL */
-		msg = NULL;
+  if ((signo < 0) || (signo >= sys_nsig))
+    {
+      /* Out of range, just return NULL */
+      msg = NULL;
     }
-	else if ((sys_siglist == NULL) || (sys_siglist[signo] == NULL)) {
-		/* In range, but no sys_siglist or no entry at this index. */
-		sprintf (buf, "Signal %d", signo);
-		msg = (const char *) buf;
+  else if ((sys_siglist == NULL) || (sys_siglist[signo] == NULL))
+    {
+      /* In range, but no sys_siglist or no entry at this index. */
+      sprintf (buf, "Signal %d", signo);
+      msg = (const char *) buf;
     }
-	else {
-		/* In range, and a valid message.  Just return the message. */
-		msg = (const char *) sys_siglist[signo];
+  else
+    {
+      /* In range, and a valid message.  Just return the message. */
+      msg = (const char *) sys_siglist[signo];
     }
   
-	return (msg);
+  return (msg);
 }
 

@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## Copyright 2004 Kenneth D. Weinert
+## Copyright 2005 Kenneth D. Weinert
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/readline.m4 \
 			$(ac_aux_dir)/sys_errlist.m4 \
 			$(ac_aux_dir)/sys_siglist.m4
 
-EXTRA_DIST		= _sicrc bootstrap mkstamp
+EXTRA_DIST		= bootstrap mkstamp
 
 AUTOMAKE_OPTIONS 	= gnits
 SUBDIRS 		= replace gngserver modules src tests doc

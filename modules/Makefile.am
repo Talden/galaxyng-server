@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## Copyright 2004 Kenneth D. Weinert
+## Copyright 2005 Kenneth D. Weinert 
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,29 +18,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES        = -I$(top_builddir) -I$(top_srcdir) \
-                -I$(top_builddir)/gngserver -I$(top_srcdir)/gngserver \
+                -I$(top_builddir)/sic -I$(top_srcdir)/sic \
                 -I$(top_builddir)/src -I$(top_srcdir)/src
 
-pkglib_LTLIBRARIES = unknown.la
+CPPFLAGS = -O3 -Wall -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -shared -fpic
 
-pkglib_LTLIBRARIES += cd.la dollar.la eval.la sqrt.la
+EGP_SRC = ExampleGenericPlugin.cpp
+EGP_OBJ = $(EGP_SRC:.cpp=.o)
+EGP_SO  = ExampleGenericPlugin.so
 
-cd_la_SOURCES = cd.cpp
-cd_la_LDFLAGS = -no-undefined -module -avoid-version
-cd_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
-
-dollar_la_SOURCES = dollar.cpp
-dollar_la_LDFLAGS = -no-undefined -module -avoid-version
-dollar_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
-
-eval_la_SOURCES = eval.cpp
-eval_la_LDFLAGS = -no-undefined -module -avoid-version
-eval_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
-
-sqrt_la_SOURCES = sqrt.cpp
-sqrt_la_LDFLAGS = -no-undefined -module -avoid-version
-sqrt_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la -lm
-
-unknown_la_SOURCES = unknown.cpp
-unknown_la_LDFLAGS = -no-undefined -module -avoid-version
-unknown_la_LIBADD  = $(top_builddir)/gngserver/libgngserver.la
+modules : $(EGP_SO)
+	$(CPP) $(CPPFLAGS) -o $(EGP_SO)

@@ -1,5 +1,5 @@
 /* basename.c -- implement basename() for architectures without it
-   Copyright 2004 Kenneth D. Weinert
+   Copyright (C) 2000 Gary V. Vaughan
   
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
