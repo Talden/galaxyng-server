@@ -1,0 +1,24 @@
+-*- indented-text -*-
+
+This is `gngserver', a server for the PBeM game GalaxyNG which is
+defined by runtime loadable modules.  It is wrapped around Thomas
+Tanner's libltdl implementation from libtool-1.4, so is able to load
+modules on just about any platform with a C compiler, and a reasonable C
+library.
+
+GNGServer itself consists of the library, libgngserver.la, and the
+headers installed in `/usr/local/include/gngserver'.
+
+This distribution also includes a complete server, which reads input
+from incoming emails and directly delivered communications and feeds it
+to a bunch of modules to provide complete server functionality.  You
+could easily make it work entirely differently by changing the way the
+input stream is collected, and/or the set of modules it loads.
+
+One of the uses of this feature is to allow variant games to be tried
+out.
+
+
+Local Variables:
+fill-column: 72
+End:

@@ -1,0 +1,13 @@
+-*- Outline -*-
+
+Wishlist
+
+* documentation
+* free table contents at exit to analyse memory usage
+* functions
+* environment manipulation - this could be stored in a dictionary?
+* process pipes
+* history saving and restoring
+* autoloading of builtin dynamic modules
+* set module search path and initial module cli parameters
+* a readline completer dynamic module

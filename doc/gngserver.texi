@@ -1,0 +1,127 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename gngserver.info
+@settitle GNGServer - Next Generation Server for the PBeM game GalaxyNG
+@setchapternewpage odd
+@c %**end of header
+@c @finalout
+@headings 	    double
+
+@include version.texi
+
+@dircategory Games
+@direntry
+* gngserver: (gngserver).	Next Generation Server for the PBeM game GalaxyNG.
+@end direntry
+
+@ifinfo
+This file documents GNGServer.
+
+Copyright 2004 Kenneth D. Weinert
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission notice
+identical to this one except for the removal of this paragraph
+
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Foundation.
+@end ifinfo
+
+@titlepage
+@sp 10
+@title GNGServer
+@subtitle Edition @value{EDITION}, @value{UPDATED}
+@subtitle $Id$
+@author Kenneth D. Weinert
+@author @email{galaxyserver@@gmail.com)
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2004 Kenneth D. Weinert
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Authors.
+@end titlepage
+
+@ifnottex
+@c    name next   previous  up
+@node Top, Introduction, (dir), (dir)
+@top  GNGServer
+@end ifnottex
+
+@iftex
+@unnumbered Forward
+@end iftex
+
+This is GNGServer.
+
+@menu
+* Introduction::
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+GalaxyNG is a play by email (PBeM) game where you control a race of
+beings that one or more home planets. You'll issue orders, get reports,
+use diplomacy with other players, etc. You can find all you want to know
+about the game at http://galaxyng.sourceforge.net.
+
+This document is about the server that implements the rules, adjudicates
+turns, allows players to interact outside of the turn structure, and
+manages game design, creation, and registration.
+
+The original server was written over the course of many years and
+enhanced and fixed by many people. Written in C, it has disturbing
+comments like "don't compile with optimizations because it will break
+everything". The code itself has become very fragile -
+enhancements/fixes in one place can introduce bugs in seemingly
+unrelated places.
+
+Thus this rewrite. I've undertaken it to accomplish several goals -
+rewrite it in C++ (more for my internalization of the language than a
+belief that C++ is required), reproduce the functionality of the
+existing server, add some enhancements (I'm tired of only planets having
+routes :), and in general make the code easier to extend for other
+future enhancements.
+
+@page
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@c summarycontents
+@contents
+@bye
+
+@ignore
+Local Variables:
+fill-column: 72
+End:
+@end ignore

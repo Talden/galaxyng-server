@@ -1,0 +1,12 @@
+-*- indented-text -*-
+
+gngserver NEWS - History of user visible changes
+Copyright 2004 Kenneth D. Weinert
+
+New in 0.1.0: 2004-11-15 Kenneth D. Weinert
+* First release of sic.
+
+
+Local Variables:
+fill-column: 72
+End:
